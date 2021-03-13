@@ -42,6 +42,6 @@
 <script>
 export default {
   name: 'ProductCard',
-  props: ['title', 'price', 'src'],
-};
+  props: ['title', 'price', 'src']
+}
 </script>

@@ -7,13 +7,13 @@
 </template>
 
 <script>
-import ProductCard from './ProductCard.vue';
+import ProductCard from './ProductCard.vue'
 
 export default {
   name: 'ProductList',
   components: {
-    ProductCard,
+    ProductCard
   },
-  props: ['products'],
-};
+  props: ['products']
+}
 </script>
