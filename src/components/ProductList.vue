@@ -1,7 +1,7 @@
 <template>
   <ul class='catalog__list'>
     <li class='catalog__item' v-for='product in products' :key='product.id'>
-      <ProductCard :title='product.title' :price='product.price' :src='product.src' :color='product.color' />
+      <ProductCard :product='product' />
     </li>
   </ul>
 </template>

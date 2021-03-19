@@ -1,60 +1,35 @@
 <template>
   <div>
     <a class='catalog__pic' href='#'>
-      <img :src='src' :alt='title' />
+      <img :src='product.src' :alt='product.title' />
     </a>
 
     <h3 class='catalog__title'>
-      <a href='#'>{{ title }}</a>
+      <a href='#'>{{ product.title }}</a>
     </h3>
 
-    <span class='catalog__price'> {{ price }} ₽ </span>
-
-    <ul class='colors colors--black'>
-      <li class='colors__item'>
-        <label class='colors__label'>
-          <input
-            class='colors__radio sr-only'
-            type='radio'
-            value='#73B6EA'
-            v-model='selectedColor'
-          />
-          <span class='colors__value' style='background-color: #73b6ea'> </span>
-        </label>
-      </li>
-      <li class='colors__item'>
-        <label class='colors__label'>
-          <input
-            class='colors__radio sr-only'
-            type='radio'
-            value='#8BE000'
-            v-model='selectedColor'
-          />
-          <span class='colors__value' style='background-color: #8be000'> </span>
-        </label>
-      </li>
-      <li class='colors__item'>
-        <label class='colors__label'>
-          <input
-            class='colors__radio sr-only'
-            type='radio'
-            value='#222'
-            v-model='selectedColor'
-          />
-          <span class='colors__value' style='background-color: #222'> </span>
-        </label>
-      </li>
-    </ul>
+    <span class='catalog__price'> {{ product.price }} ₽ </span>
+    <ColorsControl
+      :color-palette='product.colors'
+      isBlack='true'
+      :name='product.id'
+      v-model:selected-color='selectedColor'
+    />
   </div>
 </template>
 
 <script>
+import ColorsControl from './controls/ColorsControl'
+
 export default {
   name: 'ProductCard',
-  props: ['title', 'price', 'src', 'color'],
+  components: {
+    ColorsControl
+  },
+  props: ['product'],
   data () {
     return {
-      selectedColor: this.color
+      selectedColor: this.product.colors[0].colorId
     }
   }
 }

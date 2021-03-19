@@ -33,82 +33,8 @@
 
       <fieldset class='form__block'>
         <legend class='form__legend'>Цвет</legend>
-        <ul class='colors'>
-           <li class='colors__item' v-for='color in colorsSet' :key='color'>
-            <label class='colors__label'>
-              <input
-                class='colors__radio sr-only'
-                type='radio'
-                name='color'
-                :value='color'
-                v-model='currentSelectedColor'
-              >
-              <span class='colors__value' :style="{backgroundColor: color}">
-              </span>
-            </label>
-          </li>
-        </ul>
+        <ColorsControl :color-palette='colorsBase' v-model:selected-color='currentSelectedColor' name='filter' />
       </fieldset>
-
-      <!-- <fieldset class='form__block'>
-        <legend class='form__legend'>Объемб в ГБ</legend>
-        <ul class='check-list'>
-          <li class='check-list__item'>
-            <label class='check-list__label'>
-              <input class='check-list__check sr-only' type='checkbox' name='volume' value='8' checked=''>
-              <span class='check-list__desc'>
-                8
-                <span>(313)</span>
-              </span>
-            </label>
-          </li>
-          <li class='check-list__item'>
-            <label class='check-list__label'>
-              <input class='check-list__check sr-only' type='checkbox' name='volume' value='16'>
-              <span class='check-list__desc'>
-                16
-                <span>(461)</span>
-              </span>
-            </label>
-          </li>
-          <li class='check-list__item'>
-            <label class='check-list__label'>
-              <input class='check-list__check sr-only' type='checkbox' name='volume' value='32'>
-              <span class='check-list__desc'>
-                32
-                <span>(313)</span>
-              </span>
-            </label>
-          </li>
-          <li class='check-list__item'>
-            <label class='check-list__label'>
-              <input class='check-list__check sr-only' type='checkbox' name='volume' value='64'>
-              <span class='check-list__desc'>
-                64
-                <span>(313)</span>
-              </span>
-            </label>
-          </li>
-          <li class='check-list__item'>
-            <label class='check-list__label'>
-              <input class='check-list__check sr-only' type='checkbox' name='volume' value='128'>
-              <span class='check-list__desc'>
-                128
-                <span>(313)</span>
-              </span>
-            </label>
-          </li>
-          <li class='check-list__item'>
-            <label class='check-list__label'>
-              <input class='check-list__check sr-only' type='checkbox' name='volume' value='264'>
-              <span class='check-list__desc'>
-                264
-                <span>(313)</span>
-              </span>
-            </label>
-          </li>
-        </ul>
-      </fieldset> -->
 
       <button class='filter__submit button button--primery' type='submit' @click.prevent='submitFilter'>
         Применить
@@ -121,10 +47,15 @@
 </template>
 
 <script>
+import ColorsControl from './controls/ColorsControl'
 import categories from '../data/categories'
+import colorBase from '../data/colorsBase'
 
 export default {
   name: 'ProductFilter',
+  components: {
+    ColorsControl
+  },
   data () {
     return {
       currentPriceFrom: 0,
@@ -133,10 +64,13 @@ export default {
       currentSelectedColor: null
     }
   },
-  props: ['priceFrom', 'priceTo', 'categoryId', 'selectedColor', 'colorsSet'],
+  props: ['priceFrom', 'priceTo', 'categoryId', 'selectedColor'],
   computed: {
     categories () {
       return categories
+    },
+    colorsBase () {
+      return colorBase
     }
   },
   watch: {
