@@ -8,15 +8,15 @@ export default [
     price: 9000,
     colors: [
       {
-        colorId: '#FF4500',
+        id: 4500,
         HEX: '#FF4500'
       },
       {
-        colorId: '#00FF00',
+        id: 100,
         HEX: '#00FF00'
       },
       {
-        colorId: '#7FFFD4',
+        id: 74,
         HEX: '#7FFFD4'
       }
     ]
@@ -30,15 +30,15 @@ export default [
     price: 19000,
     colors: [
       {
-        colorId: '#DC143C',
+        id: 143,
         HEX: '#DC143C'
       },
       {
-        colorId: '#FF1493',
+        id: 1493,
         HEX: '#FF1493'
       },
       {
-        colorId: '#FF4500',
+        id: 4500,
         HEX: '#FF4500'
       }
     ]
@@ -52,15 +52,15 @@ export default [
     price: 19900,
     colors: [
       {
-        colorId: '#FF1493',
+        id: 1493,
         HEX: '#FF1493'
       },
       {
-        colorId: '#FF4500',
+        id: 4500,
         HEX: '#FF4500'
       },
       {
-        colorId: '#191970',
+        id: 191970,
         HEX: '#191970'
       }
     ]
@@ -74,15 +74,15 @@ export default [
     price: 15000,
     colors: [
       {
-        colorId: '#00FF00',
+        id: 100,
         HEX: '#00FF00'
       },
       {
-        colorId: '#7FFFD4',
+        id: 74,
         HEX: '#7FFFD4'
       },
       {
-        colorId: '#191970',
+        id: 191970,
         HEX: '#191970'
       }
     ]
@@ -96,15 +96,15 @@ export default [
     price: 900,
     colors: [
       {
-        colorId: '#DC143C',
+        id: 143,
         HEX: '#DC143C'
       },
       {
-        colorId: '#7FFFD4',
+        id: 74,
         HEX: '#7FFFD4'
       },
       {
-        colorId: '#191970',
+        id: 191970,
         HEX: '#191970'
       }
     ]
@@ -118,15 +118,15 @@ export default [
     price: 135000,
     colors: [
       {
-        colorId: '#DC143C',
+        id: 143,
         HEX: '#DC143C'
       },
       {
-        colorId: '#FF1493',
+        id: 1493,
         HEX: '#FF1493'
       },
       {
-        colorId: '#FF4500',
+        id: 4500,
         HEX: '#FF4500'
       }
     ]
@@ -140,15 +140,15 @@ export default [
     price: 2500,
     colors: [
       {
-        colorId: '#DC143C',
+        id: 143,
         HEX: '#DC143C'
       },
       {
-        colorId: '#7FFFD4',
+        id: 74,
         HEX: '#7FFFD4'
       },
       {
-        colorId: '#191970',
+        id: 191970,
         HEX: '#191970'
       }
     ]
@@ -162,15 +162,15 @@ export default [
     price: 9300,
     colors: [
       {
-        colorId: '#DC143C',
+        id: 143,
         HEX: '#DC143C'
       },
       {
-        colorId: '#00FF00',
+        id: 100,
         HEX: '#00FF00'
       },
       {
-        colorId: '#7FFFD4',
+        id: 74,
         HEX: '#7FFFD4'
       }
     ]
@@ -184,15 +184,15 @@ export default [
     price: 1000,
     colors: [
       {
-        colorId: '#DC143C',
+        id: 143,
         HEX: '#DC143C'
       },
       {
-        colorId: '#FF1493',
+        id: 1493,
         HEX: '#FF1493'
       },
       {
-        colorId: '#FF4500',
+        id: 4500,
         HEX: '#FF4500'
       }
     ]
@@ -206,15 +206,15 @@ export default [
     price: 300,
     colors: [
       {
-        colorId: '#DC143C',
+        id: 143,
         HEX: '#DC143C'
       },
       {
-        colorId: '#FF1493',
+        id: 1493,
         HEX: '#FF1493'
       },
       {
-        colorId: '#191970',
+        id: 191970,
         HEX: '#191970'
       }
     ]
@@ -228,15 +228,15 @@ export default [
     price: 2500,
     colors: [
       {
-        colorId: '#00FF00',
+        id: 100,
         HEX: '#00FF00'
       },
       {
-        colorId: '#7FFFD4',
+        id: 74,
         HEX: '#7FFFD4'
       },
       {
-        colorId: '#191970',
+        id: 191970,
         HEX: '#191970'
       }
     ]
@@ -250,15 +250,15 @@ export default [
     price: 6000,
     colors: [
       {
-        colorId: '#DC143C',
+        id: 143,
         HEX: '#DC143C'
       },
       {
-        colorId: '#FF1493',
+        id: 1493,
         HEX: '#FF1493'
       },
       {
-        colorId: '#191970',
+        id: 191970,
         HEX: '#191970'
       }
     ]
@@ -272,15 +272,15 @@ export default [
     price: 16500,
     colors: [
       {
-        colorId: '#00FF00',
+        id: 100,
         HEX: '#00FF00'
       },
       {
-        colorId: '#7FFFD4',
+        id: 74,
         HEX: '#7FFFD4'
       },
       {
-        colorId: '#191970',
+        id: 191970,
         HEX: '#191970'
       }
     ]
@@ -294,15 +294,15 @@ export default [
     price: 13000,
     colors: [
       {
-        colorId: '#DC143C',
+        id: 143,
         HEX: '#DC143C'
       },
       {
-        colorId: '#7FFFD4',
+        id: 74,
         HEX: '#7FFFD4'
       },
       {
-        colorId: '#191970',
+        id: 191970,
         HEX: '#191970'
       }
     ]
@@ -316,15 +316,15 @@ export default [
     price: 10000,
     colors: [
       {
-        colorId: '#DC143C',
+        id: 143,
         HEX: '#DC143C'
       },
       {
-        colorId: '#FF1493',
+        id: 1493,
         HEX: '#FF1493'
       },
       {
-        colorId: '#FF4500',
+        id: 4500,
         HEX: '#FF4500'
       }
     ]

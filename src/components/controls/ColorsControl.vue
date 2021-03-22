@@ -1,13 +1,12 @@
 <template>
-  <ul class='colors' :class="{'colors--black': isBlack}">
-    <li class='colors__item' v-for='color in colorPalette' :key='color.colorId'>
+  <ul class='colors'>
+    <li class='colors__item' v-for='color in colorPalette' :key='color.id'>
       <label class='colors__label'>
         <input
           class='colors__radio sr-only'
           type='radio'
-          :name='name'
-          :value='color.HEX'
-          v-model='curentSelectedColor'
+          :value='color.id'
+          v-model='currentSelectedColor'
         >
         <span class='colors__value' :style='{backgroundColor: color.HEX}'>
         </span>
@@ -19,10 +18,16 @@
 <script>
 export default {
   name: 'ColorsControl',
-  props: ['colorPalette', 'isBlack', 'name', 'selectedColor'],
+  props: {
+    colorPalette: {
+      type: Object,
+      requared: true
+    },
+    selectedColor: Number
+  },
   emits: ['update:selectedColor'],
   computed: {
-    curentSelectedColor: {
+    currentSelectedColor: {
       get () {
         return this.selectedColor
       },

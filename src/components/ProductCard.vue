@@ -10,9 +10,8 @@
 
     <span class='catalog__price'> {{ product.price }} ₽ </span>
     <ColorsControl
+      class='colors--black'
       :color-palette='product.colors'
-      isBlack='true'
-      :name='product.id'
       v-model:selected-color='selectedColor'
     />
   </div>
@@ -26,10 +25,15 @@ export default {
   components: {
     ColorsControl
   },
-  props: ['product'],
+  props: {
+    product: {
+      type: Object,
+      requared: true
+    }
+  },
   data () {
     return {
-      selectedColor: this.product.colors[0].colorId
+      selectedColor: this.product.colors[0].id
     }
   }
 }

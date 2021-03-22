@@ -66,7 +66,7 @@ export default {
         filteredProducts = filteredProducts.filter(product => product.categoryId === this.filterCategoryId)
       }
       if (this.filterColor) {
-        filteredProducts = filteredProducts.filter(product => product.colors.find(color => color.colorId === this.filterColor))
+        filteredProducts = filteredProducts.filter(product => product.colors.find(color => color.id === this.filterColor))
       }
       this.goToFirstPage()
 

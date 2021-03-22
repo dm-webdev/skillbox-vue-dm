@@ -33,7 +33,7 @@
 
       <fieldset class='form__block'>
         <legend class='form__legend'>Цвет</legend>
-        <ColorsControl :color-palette='colorsBase' v-model:selected-color='currentSelectedColor' name='filter' />
+        <ColorsControl :color-palette='colorsBase' v-model:selected-color='currentSelectedColor' />
       </fieldset>
 
       <button class='filter__submit button button--primery' type='submit' @click.prevent='submitFilter'>
@@ -64,7 +64,12 @@ export default {
       currentSelectedColor: null
     }
   },
-  props: ['priceFrom', 'priceTo', 'categoryId', 'selectedColor'],
+  props: {
+    priceFrom: Number,
+    priceTo: Number,
+    categoryId: Number,
+    selectedColor: String
+  },
   computed: {
     categories () {
       return categories

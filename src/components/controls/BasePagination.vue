@@ -42,7 +42,20 @@
 <script>
 export default {
   name: 'BasePagination',
-  props: ['currentPage', 'totalCount', 'countPerPage'],
+  props: {
+    currentPage: {
+      type: Number,
+      requires: true
+    },
+    totalCount: {
+      type: Number,
+      requires: true
+    },
+    countPerPage: {
+      type: Number,
+      requires: true
+    }
+  },
   emits: ['update:currentPage'],
   computed: {
     pages () {

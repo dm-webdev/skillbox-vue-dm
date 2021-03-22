@@ -14,6 +14,8 @@ export default {
   components: {
     ProductCard
   },
-  props: ['products']
+  props: {
+    products: Object
+  }
 }
 </script>
