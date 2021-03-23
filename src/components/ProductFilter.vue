@@ -47,9 +47,9 @@
 </template>
 
 <script>
-import ColorsControl from './controls/ColorsControl'
-import categories from '../data/categories'
-import colorBase from '../data/colorsBase'
+import ColorsControl from '@/components/controls/ColorsControl.vue'
+import categories from '@/data/categories'
+import colorBase from '@/data/colorsBase'
 
 export default {
   name: 'ProductFilter',

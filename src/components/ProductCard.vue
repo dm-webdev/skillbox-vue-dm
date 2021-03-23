@@ -1,6 +1,10 @@
 <template>
   <div>
-    <a class='catalog__pic' href='#'>
+    <a
+      class='catalog__pic'
+      href='#'
+      @click.prevent="gotoPage('product', {id: product.id})"
+    >
       <img :src='product.src' :alt='product.title' />
     </a>
 
@@ -18,7 +22,8 @@
 </template>
 
 <script>
-import ColorsControl from './controls/ColorsControl'
+import ColorsControl from '@/components/controls/ColorsControl.vue'
+import eventBus from '@/eventBus'
 
 export default {
   name: 'ProductCard',
@@ -34,6 +39,11 @@ export default {
   data () {
     return {
       selectedColor: this.product.colors[0].id
+    }
+  },
+  methods: {
+    gotoPage (pageName, pageParams) {
+      eventBus.emit('gotoPage', pageName, pageParams)
     }
   }
 }
