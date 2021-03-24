@@ -12,8 +12,8 @@
       <a href='#'>{{ product.title }}</a>
     </h3>
 
-    <span class='catalog__price'> {{ product.price }} ₽ </span>
-    <ColorsControl
+    <span class='catalog__price'> {{ formatedPrice }} ₽ </span>
+    <colors-control
       class='colors--black'
       :color-palette='product.colors'
       v-model:selected-color='selectedColor'
@@ -23,7 +23,8 @@
 
 <script>
 import ColorsControl from '@/components/controls/ColorsControl.vue'
-import eventBus from '@/eventBus'
+import { gotoPage } from '@/helpers/routesHelpers'
+import { numberFormat } from '@/helpers/formatHelpers'
 
 export default {
   name: 'ProductCard',
@@ -41,10 +42,13 @@ export default {
       selectedColor: this.product.colors[0].id
     }
   },
-  methods: {
-    gotoPage (pageName, pageParams) {
-      eventBus.emit('gotoPage', pageName, pageParams)
+  computed: {
+    formatedPrice () {
+      return numberFormat(this.product.price)
     }
+  },
+  methods: {
+    gotoPage
   }
 }
 </script>

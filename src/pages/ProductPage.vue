@@ -1,92 +1,83 @@
 <template>
   <main class="content container">
     <div class="content__top">
-      <ul class="breadcrumbs">
+      <bread-crumbs :name='breadcrumbsName' />
+      <!-- <ul class="breadcrumbs">
         <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link" href="index.html">
+          <a
+            class="breadcrumbs__link"
+            href="#"
+            @click.prevent="gotoPage('main')"
+          >
             Каталог
           </a>
         </li>
         <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link" href="#">
-            Мобильный транспорт
+          <a
+            class="breadcrumbs__link"
+            href="#"
+            @click.prevent="gotoPage('main')"
+          >
+            {{ category.title }}
           </a>
         </li>
         <li class="breadcrumbs__item">
           <a class="breadcrumbs__link">
-            Смартфон Xiaomi Mi Mix 3 6/128GB
+            {{ product.title }}
           </a>
         </li>
-      </ul>
+      </ul> -->
     </div>
 
     <section class="item">
       <div class="item__pics pics">
         <div class="pics__wrapper">
-          <img width="570" height="570" src="img/phone-square.jpg" srcset="img/phone-square@2x.jpg 2x" alt="Название товара">
+          <img width="570" height="570" :src='product.src' :alt='product.title'>
         </div>
         <ul class="pics__list">
           <li class="pics__item">
             <a href="" class="pics__link pics__link--current">
-              <img width="98" height="98" src="img/phone-square-1.jpg" srcset="img/phone-square-1@2x.jpg 2x" alt="Название товара">
+              <img width="98" height="98" :src='product.src' :alt='product.title'>
             </a>
           </li>
           <li class="pics__item">
             <a href="" class="pics__link">
-              <img width="98" height="98" src="img/phone-square-2.jpg" srcset="img/phone-square-2@2x.jpg 2x" alt="Название товара">
+              <img width="98" height="98" :src='product.src' :alt='product.title'>
             </a>
           </li>
           <li class="pics__item">
             <a href="" class="pics__link">
-              <img width="98" height="98" src="img/phone-square-3.jpg" srcset="img/phone-square-3@2x.jpg 2x" alt="Название товара">
+              <img width="98" height="98" :src='product.src' :alt='product.title'>
             </a>
           </li>
           <li class="pics__item">
             <a class="pics__link" href="#">
-              <img width="98" height="98" src="img/phone-square-4.jpg" srcset="img/phone-square-4@2x.jpg 2x" alt="Название товара">
+              <img width="98" height="98" :src='product.src' :alt='product.title'>
             </a>
           </li>
         </ul>
       </div>
 
       <div class="item__info">
-        <span class="item__code">Артикул: 150030</span>
+        <span class="item__code">Артикул: {{ product.id }}</span>
         <h2 class="item__title">
-          Смартфон Xiaomi Mi Mix 3 6/128GB
+          {{ product.title }}
         </h2>
         <div class="item__form">
           <form class="form" action="#" method="POST">
             <b class="item__price">
-              18 990 ₽
+              {{ formatedPrice }} ₽
             </b>
 
             <fieldset class="form__block">
               <legend class="form__legend">Цвет:</legend>
-              <ul class="colors">
-                <li class="colors__item">
-                  <label class="colors__label">
-                    <input class="colors__radio sr-only" type="radio" name="color-item" value="blue" checked="">
-                    <span class="colors__value" style="background-color: #73B6EA;">
-                    </span>
-                  </label>
-                </li>
-                <li class="colors__item">
-                  <label class="colors__label">
-                    <input class="colors__radio sr-only" type="radio" name="color-item" value="yellow">
-                    <span class="colors__value" style="background-color: #FFBE15;">
-                    </span>
-                  </label>
-                </li>
-                <li class="colors__item">
-                  <label class="colors__label">
-                    <input class="colors__radio sr-only" type="radio" name="color-item" value="gray">
-                    <span class="colors__value" style="background-color: #939393;">
-                  </span></label>
-                </li>
-              </ul>
+              <colors-control
+                :color-palette='colors'
+                v-model:selected-color='selectedColor'
+              />
             </fieldset>
 
-            <fieldset class="form__block">
+            <!-- <fieldset class="form__block">
               <legend class="form__legend">Объемб в ГБ:</legend>
 
               <ul class="sizes sizes--primery">
@@ -115,7 +106,7 @@
                   </label>
                 </li>
               </ul>
-            </fieldset>
+            </fieldset> -->
 
             <div class="item__row">
               <div class="form__counter">
@@ -196,13 +187,64 @@
 </template>
 
 <script>
+import products from '@/data/products'
+import categories from '@/data/categories'
+import colorBase from '@/data/colorsBase'
+import ColorsControl from '@/components/controls/ColorsControl.vue'
+import BreadCrumbs from '@/components/controls/BreadCrumbs.vue'
+import { gotoPage } from '@/helpers/routesHelpers'
+import { numberFormat } from '@/helpers/formatHelpers'
+
 export default {
   name: 'ProductPage',
+  components: {
+    ColorsControl,
+    BreadCrumbs
+  },
   props: {
     pageParams: {
       type: Object,
       requared: true
     }
+  },
+  computed: {
+    product () {
+      return products.find(product => product.id === this.pageParams.id)
+    },
+    category () {
+      return categories.find(category => category.categoryId === this.product.categoryId)
+    },
+    colors () {
+      const colors = []
+      for (const iColor of this.product.colors) {
+        for (const color of colorBase) {
+          if (color.id === iColor.id) {
+            colors.push(color)
+          }
+        }
+      }
+      return colors
+    },
+    formatedPrice () {
+      return numberFormat(this.product.price)
+    },
+    breadcrumbsName () {
+      return 'каталог/' + this.category.title
+    }
+  },
+  data () {
+    return {
+      selectedColor: null
+    }
+  },
+  methods: {
+    gotoPage
   }
 }
 </script>
+
+<style lang="scss" scoped>
+  img {
+    max-height: 570px;
+  }
+</style>

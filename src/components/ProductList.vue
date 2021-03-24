@@ -4,7 +4,7 @@
       v-for='product in products'
       :key='product.id'
     >
-      <ProductCard
+      <product-card
         :product='product'
       />
     </li>

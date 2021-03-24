@@ -7,20 +7,18 @@
     <button
       class='not-found-btn'
       type='button'
-      @click.prevent='gotoPage'
+      @click.prevent="gotoPage('main')"
     >на главную страницу</button>
   </div>
 </template>
 
 <script>
-import eventBus from '@/eventBus'
+import { gotoPage } from '@/helpers/routesHelpers'
 
 export default {
   name: 'NotFoundPage',
   methods: {
-    gotoPage () {
-      eventBus.emit('gotoPage', 'main')
-    }
+    gotoPage
   }
 }
 </script>

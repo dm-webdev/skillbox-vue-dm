@@ -8,7 +8,7 @@
     </div>
 
     <div class='content__catalog'>
-      <ProductFilter
+      <product-filter
         v-model:price-from='filterPriceFrom'
         v-model:price-to='filterPriceTo'
         v-model:category-id='filterCategoryId'
@@ -16,13 +16,13 @@
       />
 
       <section class='catalog'>
-        <ProductList
+        <product-list
           :products='products'
         />
 
         <h2 v-if='filteredProducts.length === 0'>По Вашему запросу ничего не найдено ¯\_(ツ)_/¯</h2>
 
-        <BasePagination
+        <base-pagination
           v-model:current-page='currentPage'
           :count-per-page='productsPerPage'
           :total-count='totalProductsCount'
