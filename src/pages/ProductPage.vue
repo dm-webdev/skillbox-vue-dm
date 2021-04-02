@@ -2,31 +2,6 @@
   <main class="content container">
     <div class="content__top">
       <bread-crumbs :name='breadcrumbsName' />
-      <!-- <ul class="breadcrumbs">
-        <li class="breadcrumbs__item">
-          <a
-            class="breadcrumbs__link"
-            href="#"
-            @click.prevent="gotoPage('main')"
-          >
-            Каталог
-          </a>
-        </li>
-        <li class="breadcrumbs__item">
-          <a
-            class="breadcrumbs__link"
-            href="#"
-            @click.prevent="gotoPage('main')"
-          >
-            {{ category.title }}
-          </a>
-        </li>
-        <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link">
-            {{ product.title }}
-          </a>
-        </li>
-      </ul> -->
     </div>
 
     <section class="item">
@@ -192,7 +167,6 @@ import categories from '@/data/categories'
 import colorBase from '@/data/colorsBase'
 import ColorsControl from '@/components/controls/ColorsControl.vue'
 import BreadCrumbs from '@/components/controls/BreadCrumbs.vue'
-import { gotoPage } from '@/helpers/routesHelpers'
 import { numberFormat } from '@/helpers/formatHelpers'
 
 export default {
@@ -209,7 +183,7 @@ export default {
   },
   computed: {
     product () {
-      return products.find(product => product.id === this.pageParams.id)
+      return products.find(product => product.id === +this.$route.params.id)
     },
     category () {
       return categories.find(category => category.categoryId === this.product.categoryId)
@@ -229,16 +203,13 @@ export default {
       return numberFormat(this.product.price)
     },
     breadcrumbsName () {
-      return 'каталог/' + this.category.title
+      return `каталог/ ${this.category.title}/ ${this.product.title}`
     }
   },
   data () {
     return {
       selectedColor: null
     }
-  },
-  methods: {
-    gotoPage
   }
 }
 </script>

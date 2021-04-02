@@ -1,5 +1,8 @@
 export function numberFormat (num) {
-  return new Intl.NumberFormat().format(num)
+  if (Number.isFinite(num)) {
+    return new Intl.NumberFormat().format(num)
+  }
+  return ''
 }
 
 export function capitalizeFirstLetter (str) {

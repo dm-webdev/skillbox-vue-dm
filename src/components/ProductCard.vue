@@ -1,12 +1,11 @@
 <template>
   <div>
-    <a
+    <router-link
       class='catalog__pic'
-      href='#'
-      @click.prevent="gotoPage('product', {id: product.id})"
+      :to="{ name: 'product', params: {id: product.id} }"
     >
       <img :src='product.src' :alt='product.title' />
-    </a>
+    </router-link>
 
     <h3 class='catalog__title'>
       <a href='#'>{{ product.title }}</a>
@@ -23,7 +22,6 @@
 
 <script>
 import ColorsControl from '@/components/controls/ColorsControl.vue'
-import { gotoPage } from '@/helpers/routesHelpers'
 import { numberFormat } from '@/helpers/formatHelpers'
 
 export default {
@@ -46,9 +44,6 @@ export default {
     formatedPrice () {
       return numberFormat(this.product.price)
     }
-  },
-  methods: {
-    gotoPage
   }
 }
 </script>

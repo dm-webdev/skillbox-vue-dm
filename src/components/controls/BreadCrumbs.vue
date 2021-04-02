@@ -1,13 +1,12 @@
 <template>
   <ul class="breadcrumbs">
     <li class="breadcrumbs__item" v-for='name in names.nameList' :key='name'>
-      <a
+      <router-link
         class="breadcrumbs__link"
-        href="#"
-        @click.prevent="gotoPage('main')"
+        :to="{ name: 'catalog' }"
       >
         {{ name }}
-      </a>
+      </router-link>
     </li>
     <li class="breadcrumbs__item">
       <a class="breadcrumbs__link">
@@ -18,7 +17,6 @@
 </template>
 
 <script>
-import { gotoPage } from '@/helpers/routesHelpers'
 import { capitalizeFirstLetter } from '@/helpers/formatHelpers'
 
 export default {
@@ -37,9 +35,6 @@ export default {
 
       return { nameList, currentName }
     }
-  },
-  methods: {
-    gotoPage
   }
 }
 </script>

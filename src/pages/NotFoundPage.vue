@@ -4,22 +4,20 @@
 
     <div class='not-found-text'>¯\_(ツ)_/¯</div>
 
-    <button
+    <router-link
       class='not-found-btn'
-      type='button'
-      @click.prevent="gotoPage('main')"
-    >на главную страницу</button>
+      tag='button'
+      :to="{name: 'catalog'}"
+    >
+      на главную страницу
+    </router-link>
   </div>
 </template>
 
 <script>
-import { gotoPage } from '@/helpers/routesHelpers'
 
 export default {
-  name: 'NotFoundPage',
-  methods: {
-    gotoPage
-  }
+  name: 'NotFoundPage'
 }
 </script>
 
