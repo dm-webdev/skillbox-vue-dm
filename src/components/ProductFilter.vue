@@ -18,7 +18,7 @@
       <fieldset class='form__block'>
         <legend class='form__legend'>Категория</legend>
         <label class='form__label form__label--select'>
-          <select class='form__select' type='text' name='category' v-model.number='currentCategoryId'>
+          <select class='form__select' v-model.number='currentCategoryId'>
             <option value='0'>Все категории</option>
             <option
               :value='category.categoryId'

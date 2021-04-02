@@ -39,7 +39,7 @@
           {{ product.title }}
         </h2>
         <div class="item__form">
-          <form class="form" action="#" method="POST">
+          <form class="form" @submit.prevent='addToCart'>
             <b class="item__price">
               {{ formatedPrice }} ₽
             </b>
@@ -47,7 +47,7 @@
             <fieldset class="form__block">
               <legend class="form__legend">Цвет:</legend>
               <colors-control
-                :color-palette='colors'
+                :color-palette='product.colors'
                 v-model:selected-color='selectedColor'
               />
             </fieldset>
@@ -85,15 +85,15 @@
 
             <div class="item__row">
               <div class="form__counter">
-                <button type="button" aria-label="Убрать один товар">
+                <button type="button" aria-label="Убрать один товар" @click.prevent='reduceProduct'>
                   <svg width="12" height="12" fill="currentColor">
                     <use xlink:href="#icon-minus"></use>
                   </svg>
                 </button>
 
-                <input type="text" value="1" name="count">
+                <input type="text" v-model.number='productAmount'>
 
-                <button type="button" aria-label="Добавить один товар">
+                <button type="button" aria-label="Добавить один товар" @click.prevent='increaseProduct'>
                   <svg width="12" height="12" fill="currentColor">
                     <use xlink:href="#icon-plus"></use>
                   </svg>
@@ -164,7 +164,6 @@
 <script>
 import products from '@/data/products'
 import categories from '@/data/categories'
-import colorBase from '@/data/colorsBase'
 import ColorsControl from '@/components/controls/ColorsControl.vue'
 import BreadCrumbs from '@/components/controls/BreadCrumbs.vue'
 import { numberFormat } from '@/helpers/formatHelpers'
@@ -188,17 +187,6 @@ export default {
     category () {
       return categories.find(category => category.categoryId === this.product.categoryId)
     },
-    colors () {
-      const colors = []
-      for (const iColor of this.product.colors) {
-        for (const color of colorBase) {
-          if (color.id === iColor.id) {
-            colors.push(color)
-          }
-        }
-      }
-      return colors
-    },
     formatedPrice () {
       return numberFormat(this.product.price)
     },
@@ -208,7 +196,28 @@ export default {
   },
   data () {
     return {
-      selectedColor: null
+      selectedColor: -1,
+      // selectedColor: this.product.colors[0].id,
+      productAmount: 1
+    }
+  },
+  methods: {
+    addToCart () {
+      this.$store.commit(
+        'addProductToCart',
+        { productId: this.product.id, amount: this.productAmount, colorId: this.selectedColor }
+      )
+      console.log(this.$store.state.cartProducts)
+    },
+    increaseProduct () {
+      this.productAmount += 1
+    },
+    reduceProduct () {
+      if (this.productAmount === 1) {
+        this.productAmount = 1
+      } else {
+        this.productAmount -= 1
+      }
     }
   }
 }

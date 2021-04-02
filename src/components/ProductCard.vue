@@ -37,7 +37,7 @@ export default {
   },
   data () {
     return {
-      selectedColor: this.product.colors[0].id
+      selectedColor: -1
     }
   },
   computed: {

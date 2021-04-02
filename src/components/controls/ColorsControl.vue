@@ -1,6 +1,6 @@
 <template>
   <ul class='colors'>
-    <li class='colors__item' v-for='color in colorPalette' :key='color.id'>
+    <li class='colors__item' v-for='color in colors' :key='color.id'>
       <label class='colors__label'>
         <input
           class='colors__radio sr-only'
@@ -16,6 +16,8 @@
 </template>
 
 <script>
+import colorBase from '@/data/colorsBase'
+
 export default {
   name: 'ColorsControl',
   props: {
@@ -29,11 +31,27 @@ export default {
   computed: {
     currentSelectedColor: {
       get () {
-        return this.selectedColor
+        if (this.selectedColor === -1) {
+          this.$emit('update:selectedColor', this.colorPalette[0].id)
+          return this.colorPalette[0].id
+        } else {
+          return this.selectedColor
+        }
       },
       set (value) {
         this.$emit('update:selectedColor', value)
       }
+    },
+    colors () {
+      const colors = []
+      for (const iColor of this.colorPalette) {
+        for (const color of colorBase) {
+          if (color.id === iColor.id) {
+            colors.push(color)
+          }
+        }
+      }
+      return colors
     }
   }
 }
