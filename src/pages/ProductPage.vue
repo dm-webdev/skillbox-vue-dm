@@ -197,7 +197,6 @@ export default {
   data () {
     return {
       selectedColor: -1,
-      // selectedColor: this.product.colors[0].id,
       productAmount: 1
     }
   },
@@ -207,7 +206,7 @@ export default {
         'addProductToCart',
         { productId: this.product.id, amount: this.productAmount, colorId: this.selectedColor }
       )
-      console.log(this.$store.state.cartProducts)
+      console.log(this.$store)
     },
     increaseProduct () {
       this.productAmount += 1

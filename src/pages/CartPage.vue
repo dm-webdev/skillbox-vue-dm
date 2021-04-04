@@ -5,8 +5,11 @@
       <h1 class="content__title">
         Корзина
       </h1>
-      <span class="content__info">
-        3 товара
+      <span class="content__info" v-if="totalCount === 0">
+        Ваша корзина пуста.
+      </span>
+      <span class="content__info" v-if="totalCount > 0">
+        Общее количество товаров в корзине: {{ totalCount }} шт
       </span>
     </div>
 
@@ -14,63 +17,22 @@
       <form class="cart__form form" action="#" method="POST">
         <div class="cart__field">
           <ul class="cart__list">
-            <li class="cart__item product">
+            <li class="cart__item product" v-for="item in products" :key="item.proproductId + item.colorId">
               <div class="product__pic">
-                <img src="img/phone-square-3.jpg" width="120" height="120" srcset="img/phone-square-3@2x.jpg 2x" alt="Название товара">
+                <img :src="item.product.src" width="120" height="120" :alt="item.product.title">
               </div>
               <h3 class="product__title">
-                Смартфон Xiaomi Redmi Note 7 Pro 6/128GB
-              </h3>
-              <p class="product__info">
-                Объем: <span>128GB</span>
-              </p>
-              <span class="product__code">
-                Артикул: 1501230
-              </span>
-
-              <div class="product__counter form__counter">
-                <button type="button" aria-label="Убрать один товар">
-                  <svg width="10" height="10" fill="currentColor">
-                    <use xlink:href="#icon-minus"></use>
-                  </svg>
-                </button>
-
-                <input type="text" value="1" name="count">
-
-                <button type="button" aria-label="Добавить один товар">
-                  <svg width="10" height="10" fill="currentColor">
-                    <use xlink:href="#icon-plus"></use>
-                  </svg>
-                </button>
-              </div>
-
-              <b class="product__price">
-                18 990 ₽
-              </b>
-
-              <button class="product__del button-del" type="button" aria-label="Удалить товар из корзины">
-                <svg width="20" height="20" fill="currentColor">
-                  <use xlink:href="#icon-close"></use>
-                </svg>
-              </button>
-            </li>
-
-            <li class="cart__item product">
-              <div class="product__pic">
-                <img src="img/pic-square-2.jpg" width="120" height="120" srcset="img/pic-square-2@2x.jpg 2x" alt="Название товара">
-              </div>
-              <h3 class="product__title">
-                Гироскутер Razor Hovertrax 2.0
+                {{ item.product.title }}
               </h3>
               <p class="product__info product__info--color">
                 Цвет:
                 <span>
-                  <i style="background-color: #73B6EA"></i>
-                  Нежно-голубой
+                  <i :style='{backgroundColor: item.color.HEX}'></i>
+                  {{ item.colorName }}
                 </span>
               </p>
               <span class="product__code">
-                Артикул: 1501230
+                Артикул: {{ item.productId }}
               </span>
 
               <div class="product__counter form__counter">
@@ -80,7 +42,7 @@
                   </svg>
                 </button>
 
-                <input type="text" value="1" name="count">
+                <input type="text" :value="item.amount" name="count">
 
                 <button type="button" aria-label="Добавить один товар">
                   <svg width="10" height="10" fill="currentColor">
@@ -90,52 +52,7 @@
               </div>
 
               <b class="product__price">
-                4 990 ₽
-              </b>
-
-              <button class="product__del button-del" type="button" aria-label="Удалить товар из корзины">
-                <svg width="20" height="20" fill="currentColor">
-                  <use xlink:href="#icon-close"></use>
-                </svg>
-              </button>
-            </li>
-
-            <li class="cart__item product">
-              <div class="product__pic">
-                <img src="img/pic-square-3.jpg" width="120" height="120" srcset="img/pic-square-3@2x.jpg 2x" alt="Название товара">
-              </div>
-              <h3 class="product__title">
-                Электрический дрифт-карт Razor Lil’ Crazy
-              </h3>
-              <p class="product__info product__info--color">
-                Цвет:
-                <span>
-                  <i style="background-color: #FF6B00"></i>
-                  Оранжевый
-                </span>
-              </p>
-              <span class="product__code">
-                Артикул: 1501230
-              </span>
-
-              <div class="product__counter form__counter">
-                <button type="button" aria-label="Убрать один товар">
-                  <svg width="10" height="10" fill="currentColor">
-                    <use xlink:href="#icon-minus"></use>
-                  </svg>
-                </button>
-
-                <input type="text" value="1" name="count">
-
-                <button type="button" aria-label="Добавить один товар">
-                  <svg width="10" height="10" fill="currentColor">
-                    <use xlink:href="#icon-plus"></use>
-                  </svg>
-                </button>
-              </div>
-
-              <b class="product__price">
-                8 990 ₽
+                {{ item.totalProductPrice }} ₽
               </b>
 
               <button class="product__del button-del" type="button" aria-label="Удалить товар из корзины">
@@ -152,7 +69,7 @@
             Мы&nbsp;посчитаем стоимость доставки на&nbsp;следующем этапе
           </p>
           <p class="cart__price">
-            Итого: <span>32 970 ₽</span>
+            Итого: <span>{{ formatedTotalPrice }} ₽</span>
           </p>
 
           <button class="cart__button button button--primery" type="submit">
@@ -165,54 +82,27 @@
 </template>
 
 <script>
-// import products from '@/data/products'
-// import categories from '@/data/categories'
-// import colorBase from '@/data/colorsBase'
-// import ColorsControl from '@/components/controls/ColorsControl.vue'
 import BreadCrumbs from '@/components/controls/BreadCrumbs.vue'
-// import { numberFormat } from '@/helpers/formatHelpers'
+import { mapGetters } from 'vuex'
+import { numberFormat } from '@/helpers/formatHelpers'
 
 export default {
   name: 'CartPage',
   components: {
-  //   ColorsControl,
     BreadCrumbs
   },
-  // props: {
-  //   pageParams: {
-  //     type: Object,
-  //     requared: true
-  //   }
-  // },
   computed: {
-  //   product () {
-  //     return products.find(product => product.id === +this.$route.params.id)
-  //   },
-  //   category () {
-  //     return categories.find(category => category.categoryId === this.product.categoryId)
-  //   },
-  //   colors () {
-  //     const colors = []
-  //     for (const iColor of this.product.colors) {
-  //       for (const color of colorBase) {
-  //         if (color.id === iColor.id) {
-  //           colors.push(color)
-  //         }
-  //       }
-  //     }
-  //     return colors
-  //   },
-  //   formatedPrice () {
-  //     return numberFormat(this.product.price)
-  //   },
+    ...mapGetters({
+      products: 'cartDetailProducts',
+      totalCount: 'productInCartCount',
+      totalPrice: 'cartTotalPrice'
+    }),
+    formatedTotalPrice () {
+      return numberFormat(this.totalPrice)
+    },
     breadcrumbsName () {
       return 'каталог/корзина'
     }
   }
-  // data () {
-  //   return {
-  //     selectedColor: null
-  //   }
-  // }
 }
 </script>
