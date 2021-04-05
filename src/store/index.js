@@ -19,6 +19,15 @@ export const store = createStore({
       } else {
         state.cartProducts.push({ productId, amount, colorId })
       }
+    },
+    updateCartProductAmount (state, { productId, amount, colorId }) {
+      const item = state.cartProducts.find(item => item.productId === productId && item.colorId === colorId)
+      if (item) {
+        item.amount = amount
+      }
+    },
+    deleteCartProduct (state, { productId, colorId }) {
+      state.cartProducts = state.cartProducts.filter(item => !(item.productId === productId && item.colorId === colorId))
     }
   },
   getters: {

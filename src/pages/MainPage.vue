@@ -48,7 +48,7 @@ export default {
   data () {
     return {
       currentPage: 1,
-      productsPerPage: 3,
+      productsPerPage: 6,
       filterPriceFrom: 0,
       filterPriceTo: 0,
       filterCategoryId: 0,
