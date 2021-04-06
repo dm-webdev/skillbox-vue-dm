@@ -20,21 +20,11 @@
     </p>
     <span class="product__code"> Артикул: {{ item.productId }} </span>
 
-    <div class="product__counter form__counter">
-      <button type="button" aria-label="Убрать один товар" @click.prevent="reduceAmount">
-        <svg width="10" height="10" fill="currentColor">
-          <use xlink:href="#icon-minus"></use>
-        </svg>
-      </button>
-
-      <input type="text" v-model.number="amount" />
-
-      <button type="button" aria-label="Добавить один товар" @click.prevent="increaseAmount">
-        <svg width="10" height="10" fill="currentColor">
-          <use xlink:href="#icon-plus"></use>
-        </svg>
-      </button>
-    </div>
+    <product-counter
+      class="product__counter"
+      :amount='amount'
+      v-model:currentAmount='amount'
+    />
 
     <b class="product__price"> {{ item.totalProductPrice }} ₽ </b>
 
@@ -53,9 +43,13 @@
 
 <script>
 import { mapMutations } from 'vuex'
+import ProductCounter from './controls/ProductCounter.vue'
 
 export default {
   name: 'CartItem',
+  components: {
+    ProductCounter
+  },
   props: {
     item: {
       type: Object,
@@ -77,29 +71,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations({ deleteProduct: 'deleteCartProduct' }),
-    increaseAmount () {
-      this.$store.commit('updateCartProductAmount', {
-        productId: this.item.productId,
-        amount: this.amount += 1,
-        colorId: this.item.colorId
-      })
-    },
-    reduceAmount () {
-      if (this.amount === 1) {
-        this.$store.commit('updateCartProductAmount', {
-          productId: this.item.productId,
-          amount: 1,
-          colorId: this.item.colorId
-        })
-      } else {
-        this.$store.commit('updateCartProductAmount', {
-          productId: this.item.productId,
-          amount: this.amount -= 1,
-          colorId: this.item.colorId
-        })
-      }
-    }
+    ...mapMutations({ deleteProduct: 'deleteCartProduct' })
   }
 }
 </script>

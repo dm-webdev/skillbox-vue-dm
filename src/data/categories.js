@@ -8,7 +8,7 @@ export default [
     title: 'Кухонная техника'
   },
   {
-    category: 3,
+    categoryId: 3,
     title: 'Техника для дома'
   },
   {

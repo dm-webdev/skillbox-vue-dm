@@ -1,5 +1,5 @@
 <template>
-  <main class="content container">
+  <main class="content container" v-if="product">
     <div class="content__top">
       <bread-crumbs :name='breadcrumbsName' />
     </div>
@@ -84,22 +84,10 @@
             </fieldset> -->
 
             <div class="item__row">
-              <div class="form__counter">
-                <button type="button" aria-label="Убрать один товар" @click.prevent='reduceProduct'>
-                  <svg width="12" height="12" fill="currentColor">
-                    <use xlink:href="#icon-minus"></use>
-                  </svg>
-                </button>
-
-                <input type="text" v-model.number='productAmount'>
-
-                <button type="button" aria-label="Добавить один товар" @click.prevent='increaseProduct'>
-                  <svg width="12" height="12" fill="currentColor">
-                    <use xlink:href="#icon-plus"></use>
-                  </svg>
-                </button>
-              </div>
-
+              <product-counter
+                :amount='productAmount'
+                v-model:currentAmount='productAmount'
+              />
               <button class="button button--primery" type="submit">
                 В корзину
               </button>
@@ -167,12 +155,16 @@ import categories from '@/data/categories'
 import ColorsControl from '@/components/controls/ColorsControl.vue'
 import BreadCrumbs from '@/components/controls/BreadCrumbs.vue'
 import { numberFormat } from '@/helpers/formatHelpers'
+import ProductCounter from '../components/controls/ProductCounter.vue'
+import { watchEffect } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 
 export default {
   name: 'ProductPage',
   components: {
     ColorsControl,
-    BreadCrumbs
+    BreadCrumbs,
+    ProductCounter
   },
   props: {
     pageParams: {
@@ -185,12 +177,14 @@ export default {
       return products.find(product => product.id === +this.$route.params.id)
     },
     category () {
+      if (!this.product) return null
       return categories.find(category => category.categoryId === this.product.categoryId)
     },
     formatedPrice () {
       return numberFormat(this.product.price)
     },
     breadcrumbsName () {
+      if (!this.category) return ''
       return `каталог/ ${this.category.title}/ ${this.product.title}`
     }
   },
@@ -206,18 +200,17 @@ export default {
         'addProductToCart',
         { productId: this.product.id, amount: this.productAmount, colorId: this.selectedColor }
       )
-      console.log(this.$store)
-    },
-    increaseProduct () {
-      this.productAmount += 1
-    },
-    reduceProduct () {
-      if (this.productAmount === 1) {
-        this.productAmount = 1
-      } else {
-        this.productAmount -= 1
-      }
     }
+  },
+  setup () {
+    const router = useRouter()
+    const route = useRoute()
+
+    watchEffect(() => {
+      if (route.path.includes('product') && !products.find(item => item.id === +route.params.id)) {
+        router.replace({ name: 'notFound' })
+      }
+    })
   }
 }
 </script>

@@ -6,5 +6,6 @@ export function numberFormat (num) {
 }
 
 export function capitalizeFirstLetter (str) {
+  if (!str) return null
   return `${str[0].toUpperCase()}${str.substr(1)}`
 }
