@@ -1,14 +1,28 @@
 <template>
   <div class="form__counter">
-    <button type="button" aria-label="Убрать один товар" @click.prevent='reduceAmount'>
+    <button
+      type="button"
+      aria-label="Убрать один товар"
+      @click.prevent='currentAmount--'
+      :disabled='this.amount === 1'
+    >
       <svg width="12" height="12" fill="currentColor">
         <use xlink:href="#icon-minus"></use>
       </svg>
     </button>
 
-    <input type="number" v-model.number='inputAmount'>
+    <input
+      type="number"
+      v-model.number='currentAmount'
+      min="1"
+      required
+    >
 
-    <button type="button" aria-label="Добавить один товар" @click.prevent='increaseAmount'>
+    <button
+      type="button"
+      aria-label="Добавить один товар"
+      @click.prevent='currentAmount++'
+    >
       <svg width="12" height="12" fill="currentColor">
         <use xlink:href="#icon-plus"></use>
       </svg>
@@ -23,35 +37,14 @@ export default {
   props: {
     amount: Number
   },
-  data () {
-    return {
-      currentAmount: this.amount || 1
-    }
-  },
-  emits: ['update:currentAmount'],
-  methods: {
-    increaseAmount () {
-      this.$emit('update:currentAmount', this.currentAmount += 1)
-    },
-    reduceAmount () {
-      if (this.currentAmount === 1) {
-        this.$emit('update:currentAmount', this.currentAmount = 1)
-      } else {
-        this.$emit('update:currentAmount', this.currentAmount -= 1)
-      }
-    }
-  },
+  emits: ['update:amount'],
   computed: {
-    inputAmount: {
+    currentAmount: {
       get () {
-        return this.currentAmount
+        return this.amount
       },
       set (value) {
-        if (value < 1) {
-          this.$emit('update:currentAmount', this.currentAmount = 1)
-        } else {
-          this.$emit('update:currentAmount', this.currentAmount = value)
-        }
+        this.$emit('update:amount', value > 0 ? value : 1)
       }
     }
   }

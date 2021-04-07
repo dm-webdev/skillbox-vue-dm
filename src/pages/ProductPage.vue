@@ -85,8 +85,7 @@
 
             <div class="item__row">
               <product-counter
-                :amount='productAmount'
-                v-model:currentAmount='productAmount'
+                v-model:amount='productAmount'
               />
               <button class="button button--primery" type="submit">
                 В корзину
@@ -156,8 +155,6 @@ import ColorsControl from '@/components/controls/ColorsControl.vue'
 import BreadCrumbs from '@/components/controls/BreadCrumbs.vue'
 import { numberFormat } from '@/helpers/formatHelpers'
 import ProductCounter from '../components/controls/ProductCounter.vue'
-import { watchEffect } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
 
 export default {
   name: 'ProductPage',
@@ -202,15 +199,12 @@ export default {
       )
     }
   },
-  setup () {
-    const router = useRouter()
-    const route = useRoute()
-
-    watchEffect(() => {
-      if (route.path.includes('product') && !products.find(item => item.id === +route.params.id)) {
-        router.replace({ name: 'notFound' })
+  watch: {
+    '$route.params.id' () {
+      if (this.$route.path.includes('product') && !this.product) {
+        this.$router.replace({ name: 'notFound' })
       }
-    })
+    }
   }
 }
 </script>

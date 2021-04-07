@@ -22,8 +22,7 @@
 
     <product-counter
       class="product__counter"
-      :amount='amount'
-      v-model:currentAmount='amount'
+      v-model:amount='amount'
     />
 
     <b class="product__price"> {{ item.totalProductPrice }} ₽ </b>
