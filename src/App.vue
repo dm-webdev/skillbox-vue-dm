@@ -12,6 +12,7 @@ import AppHeader from '@/components/main/AppHeader.vue'
 import AppFooter from '@/components/main/AppFooter.vue'
 import Loader from '@/components/misc/Loader.vue'
 import ModalMessage from './components/modals/modalMessage.vue'
+import { useStore } from 'vuex'
 
 export default {
   name: 'App',
@@ -20,6 +21,15 @@ export default {
     AppFooter,
     Loader,
     ModalMessage
+  },
+  setup () {
+    const store = useStore()
+    const userAccessKey = localStorage.getItem('userAccessKey')
+
+    if (userAccessKey) {
+      store.commit('updateUserAccessKey', userAccessKey)
+    }
+    store.dispatch('getCart')
   }
 }
 </script>

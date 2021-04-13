@@ -23,7 +23,7 @@
           <ul class="cart__list">
             <cart-item
               v-for="item in products"
-              :key="item.productId + item.colorId"
+              :key="item.id"
               :item="item"
             />
           </ul>
@@ -40,7 +40,7 @@
           <button
             class="cart__button button button--primery"
             type="submit"
-            :disabled='totalCount === 0'
+            :disabled='totalCount === 0 || $store.state.apiConnection.isLoading'
           >
             Оформить заказ
           </button>

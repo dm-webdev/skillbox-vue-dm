@@ -13,16 +13,38 @@
 
       <cart-indicator />
     </div>
+    <button type="button" @click="showState" class="hi">show</button>
   </header>
 </template>
 
 <script>
 import CartIndicator from '@/components/misc/CartIndicator.vue'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'AppHeader',
   components: {
     CartIndicator
+  },
+  computed: {
+    ...mapGetters({
+      state: 'getState',
+      total: 'cartDetailProducts'
+    })
+  },
+  methods: {
+    showState () {
+      console.log(this.state.currentUser)
+      console.log(this.state.currentUser.cartProducts)
+      console.log(this.state.apiConnection)
+      console.log(this.total)
+    }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+  .hi {
+    width: 60px;
+  }
+</style>

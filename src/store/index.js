@@ -1,66 +1,173 @@
 import { createStore } from 'vuex'
-import products from '@/data/products'
-import colors from '@/data/colorsBase'
 import { numberFormat, capitalizeFirstLetter } from '@/helpers/formatHelpers'
+import axios from '@/helpers/axiosConfig'
 
 export const store = createStore({
   state () {
     return {
-      cartProducts: [
-        // { productId: 1, amount: 2, colorId: 143 }
-      ],
       apiConnection: {
         isLoading: false,
+        isCartLoading: false,
         modalContent: null,
-        modalType: null
+        modalType: null,
+        currentId: null
+      },
+      currentUser: {
+        accessKey: null,
+        cartProducts: []
       }
     }
   },
   mutations: {
-    addProductToCart (state, { productId, amount, colorId }) {
-      const item = state.cartProducts.find(item => item.productId === productId && item.colorId === colorId)
-      if (item) {
-        item.amount += amount
-      } else {
-        state.cartProducts.push({ productId, amount, colorId })
-      }
-    },
-    updateCartProductAmount (state, { productId, amount, colorId }) {
-      const item = state.cartProducts.find(item => item.productId === productId && item.colorId === colorId)
-      if (item) {
-        item.amount = amount
-      }
-    },
-    deleteCartProduct (state, { productId, colorId }) {
-      state.cartProducts = state.cartProducts.filter(item => !(item.productId === productId && item.colorId === colorId))
-    },
-    setMessage (state, { modalContent, modalType }) {
+    setMessage (state, { modalContent, modalType, currentId = null }) {
       state.apiConnection.modalContent = modalContent
       state.apiConnection.modalType = modalType
+      state.apiConnection.currentId = currentId
+    },
+    cleanMessage (state) {
+      state.apiConnection.modalContent = null
+      state.apiConnection.modalType = null
+      state.apiConnection.currentId = null
     },
     setIsLoading (state, isLoading) {
       state.apiConnection.isLoading = isLoading
+    },
+    setIsCartLoading (state, isCartLoading) {
+      state.apiConnection.isCartLoading = isCartLoading
+    },
+    updateUserAccessKey (state, accessKey) {
+      state.currentUser.accessKey = accessKey
+    },
+    updateCartProducts (state, items) {
+      state.currentUser.cartProducts = items
     }
   },
   getters: {
     cartDetailProducts (state) {
-      return state.cartProducts.map(item => {
-        const product = products.find(p => p.id === item.productId)
-        const color = colors.find(c => c.id === item.colorId)
+      return state.currentUser.cartProducts.map(item => {
         return {
           ...item,
-          product,
-          color,
-          colorName: capitalizeFirstLetter(color.title),
-          totalProductPrice: numberFormat(product.price * item.amount)
+          colorName: capitalizeFirstLetter(item.product.colors[0].title),
+          totalProductPrice: numberFormat(item.price * item.quantity)
         }
       })
     },
     productInCartCount (state, getters) {
-      return getters.cartDetailProducts.reduce((sum, item) => sum + item.amount, 0)
+      return getters.cartDetailProducts.reduce((sum, item) => sum + item.quantity, 0)
     },
     cartTotalPrice (state, getters) {
-      return getters.cartDetailProducts.reduce((sum, item) => sum + (item.product.price * item.amount), 0)
+      return getters.cartDetailProducts.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+    },
+    getState (state) {
+      return state
+    }
+  },
+  actions: {
+    getCart (context) {
+      context.commit('setIsLoading', true)
+      context.commit('setIsCartLoading', true)
+      return axios.get('baskets', {
+        params: {
+          userAccessKey: context.state.currentUser.accessKey
+        }
+      })
+        .then(response => {
+          if (!context.state.currentUser.accessKey) {
+            localStorage.setItem('userAccessKey', response.data.user.accessKey)
+            context.commit('updateUserAccessKey', response.data.user.accessKey)
+          }
+          context.commit('updateCartProducts', response.data.items)
+        })
+        .catch(() => context.commit('setMessage', {
+          modalContent: 'Что-то пошло не так, повторите запрос позднее',
+          modalType: 'error'
+        }))
+        .finally(() => {
+          context.commit('setIsLoading', false)
+          context.commit('setIsCartLoading', false)
+        })
+    },
+    addToCart (context, { productId, amount }) {
+      context.commit('setIsLoading', true)
+      context.commit('setIsCartLoading', true)
+      return axios.post('baskets/products', {
+        productId,
+        quantity: amount
+      }, {
+        params: {
+          userAccessKey: context.state.currentUser.accessKey
+        }
+      })
+        .then(response => {
+          context.commit('updateCartProducts', response.data.items)
+          context.commit('setMessage', {
+            modalContent: 'Товар успешно добавлен в корзину',
+            modalType: 'success'
+          })
+        })
+        .catch((err) => context.commit('setMessage', {
+          modalContent: `${err.response.data.error.message}`,
+          modalType: 'error'
+        }))
+        .finally(() => {
+          context.commit('setIsLoading', false)
+          context.commit('setIsCartLoading', false)
+        })
+    },
+    updateProductAmount (context, { productId, amount }) {
+      if (Number.isFinite(amount) && amount > 0) {
+        context.commit('setIsLoading', true)
+        context.commit('setIsCartLoading', true)
+        return axios.put('baskets/products', {
+          productId,
+          quantity: amount
+        }, {
+          params: {
+            userAccessKey: context.state.currentUser.accessKey
+          }
+        })
+          .then(response => {
+            context.commit('updateCartProducts', response.data.items)
+          })
+          .catch((err) => {
+            context.commit('setMessage', {
+              modalContent: `${err.response.data.error.message}`,
+              modalType: 'error'
+            })
+          })
+          .finally(() => {
+            context.commit('setIsLoading', false)
+            context.commit('setIsCartLoading', false)
+          })
+      }
+    },
+    deleteProductFromCart (context, { productId }) {
+      context.commit('setIsLoading', true)
+      context.commit('setIsCartLoading', true)
+      return axios.delete('baskets/products', {
+        params: {
+          userAccessKey: context.state.currentUser.accessKey
+        },
+        data: {
+          productId: productId
+        }
+      })
+        .then(response => {
+          context.commit('updateCartProducts', response.data.items)
+          context.commit('cleanMessage')
+          context.commit('setMessage', {
+            modalContent: 'Товар успешно удален из корзины',
+            modalType: 'success'
+          })
+        })
+        .catch((err) => context.commit('setMessage', {
+          modalContent: `${err.response.data.error.message}`,
+          modalType: 'error'
+        }))
+        .finally(() => {
+          context.commit('setIsLoading', false)
+          context.commit('setIsCartLoading', false)
+        })
     }
   }
 })

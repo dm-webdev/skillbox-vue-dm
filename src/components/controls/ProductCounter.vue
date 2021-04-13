@@ -4,7 +4,7 @@
       type="button"
       aria-label="Убрать один товар"
       @click.prevent='currentAmount--'
-      :disabled='this.amount === 1'
+      :disabled='amount === 1 || $store.state.apiConnection.isLoading'
     >
       <svg width="12" height="12" fill="currentColor">
         <use xlink:href="#icon-minus"></use>
@@ -22,6 +22,7 @@
       type="button"
       aria-label="Добавить один товар"
       @click.prevent='currentAmount++'
+      :disabled='$store.state.apiConnection.isLoading'
     >
       <svg width="12" height="12" fill="currentColor">
         <use xlink:href="#icon-plus"></use>
@@ -50,3 +51,11 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+  .form__counter {
+    button {
+          cursor: pointer;
+    }
+  }
+</style>

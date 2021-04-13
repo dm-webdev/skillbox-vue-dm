@@ -34,7 +34,7 @@
               <product-counter
                 v-model:amount='productAmount'
               />
-              <button class="button button--primery" type="submit">
+              <button class="button button--primery" type="submit" :disabled='$store.state.apiConnection.isLoading'>
                 В корзину
               </button>
             </div>
@@ -80,7 +80,7 @@ export default {
   },
   computed: {
     product () {
-      return this.currentProductData
+      return this.currentProduct
     },
     formatedPrice () {
       return numberFormat(this.product.price)
@@ -89,33 +89,20 @@ export default {
       return `каталог/ ${this.product.category.title}/ ${this.product.title}`
     }
   },
-  data () {
-    return {
-      selectedColor: -1,
-      productAmount: 1
-    }
-  },
-  methods: {
-    addToCart () {
-      this.$store.commit(
-        'addProductToCart',
-        { productId: this.product.id, amount: this.productAmount, colorId: this.selectedColor }
-      )
-    }
-  },
   setup () {
     const store = useStore()
     const route = useRoute()
 
     const curentId = ref(route.params.id)
-
-    const currentProductData = ref(null)
+    const productAmount = ref(1)
+    const selectedColor = ref(-1)
+    const currentProduct = ref(null)
 
     function getCurrentProduct () {
       store.commit('setIsLoading', true)
       axios.get(`products/${curentId.value}`)
         .then(response => {
-          currentProductData.value = response.data
+          currentProduct.value = response.data
         })
         .catch((err) => {
           store.commit('setMessage', {
@@ -139,7 +126,13 @@ export default {
     )
 
     return {
-      currentProductData
+      currentProduct,
+      productAmount,
+      selectedColor,
+      addToCart: () => store.dispatch('addToCart', {
+        productId: currentProduct?.value.id,
+        amount: productAmount?.value
+      })
     }
   }
 }

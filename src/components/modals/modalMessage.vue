@@ -1,5 +1,5 @@
 <template>
-  <router-link :to="{ name: 'catalog' }" custom v-slot="{ navigate }">
+  <router-link :to="toPath" custom v-slot="{ navigate }">
     <div
       class="modal-container"
       @click.self="() => {navigate(), cleanModal()}"
@@ -21,40 +21,78 @@
           <span class="modal-img" :style="{ backgroundImage: `url(${currentImg})` }" />
           <p class="modal__text">{{ modalText }}</p>
         </div>
-        <a class="modal__link" @click="() => {navigate(), cleanModal()}" role="link">Вернуться на главную</a>
+        <div v-if="isDelete" class="modal__btn-group">
+          <button
+            class="modal__btn-del button--primery"
+            type="button"
+            @click.prevent="onDeleteProduct"
+          >
+            Удалить
+          </button>
+
+          <button
+            class="modal__btn-cancell button--primery"
+            type="button"
+            @click.prevent="cleanModal"
+          >
+            отменить
+          </button>
+        </div>
+        <a
+          v-if="!(isSuccess || isDelete)"
+          class="modal__link"
+          @click="() => {navigate(), cleanModal()}"
+          role="link"
+        >
+          Вернуться на главную
+        </a>
       </div>
     </div>
   </router-link>
 </template>
 
 <script>
-import { computed } from 'vue'
-import successImg from '../../assets/img/checked.svg'
-import errorImg from '../../assets/img/error.svg'
-import defautImg from '../../assets/img/egg.svg'
+// import { computed } from 'vue'
+import { getCurrentImg, getIsSuccess, getIsDelete, getToPath, closeModalWithTimeOut } from '@/helpers/modalHelpers'
 import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
+import { ref, watch } from 'vue'
 
 export default {
   name: 'ModalMessage',
   setup () {
     const store = useStore()
-    const modalType = store.state.apiConnection.modalType
-    const modalText = store.state.apiConnection.modalContent
+    const route = useRoute()
+    const modalType = ref(store.state.apiConnection.modalType)
+    const modalText = ref(store.state.apiConnection.modalContent)
+    const currentId = ref(store.state.apiConnection.currentId)
+    const currentImg = ref(getCurrentImg(modalType.value))
+    const isSuccess = ref(getIsSuccess(modalType.value))
+    const isDelete = ref(getIsDelete(modalType.value))
+    const toPath = ref(getToPath(modalType.value, route))
+    const cleanModal = () => store.commit('cleanMessage')
+    const onDeleteProduct = () => store.dispatch('deleteProductFromCart', { productId: currentId.value })
 
-    const currentImg = computed(() => {
-      if (modalType === 'success') {
-        return successImg
-      }
-      if (modalType === 'error') {
-        return errorImg
-      }
-      return defautImg
+    closeModalWithTimeOut(isSuccess.value, cleanModal)
+
+    watch(store.state.apiConnection, () => {
+      modalText.value = store.state.apiConnection.modalContent
+      modalType.value = store.state.apiConnection.modalType
+      currentImg.value = getCurrentImg(modalType.value)
+      isSuccess.value = getIsSuccess(modalType.value)
+      isDelete.value = getIsDelete(modalType.value)
+      toPath.value = getToPath(modalType.value, route)
+      closeModalWithTimeOut(isSuccess.value, cleanModal)
     })
 
     return {
       currentImg,
       modalText,
-      cleanModal: () => store.commit('setMessage', { modalContent: null, modalType: null })
+      isSuccess,
+      cleanModal,
+      isDelete,
+      toPath,
+      onDeleteProduct
     }
   }
 }
@@ -154,6 +192,30 @@ export default {
           padding-right: 15px;
           font-size: 1.2rem;
           text-align: center;
+        }
+      }
+
+      .modal__btn-group {
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: space-between;
+        padding: 0 50px;
+
+        button {
+          padding: 10px;
+          border-radius: 5px;
+          text-transform: uppercase;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+
+        .modal__btn-del {
+          background-color: #CC0000;
+          border-color: #CC0000;
+        }
+
+        .modal__btn-cancell {
+          background-color: #9eff00;
         }
       }
 
