@@ -14,7 +14,7 @@
     <p class="product__info product__info--color">
       Цвет:
       <span>
-        <i :style="{ backgroundColor: item.color.HEX }"></i>
+        <i :style="{ backgroundColor: item.color.code }"></i>
         {{ item.colorName }}
       </span>
     </p>

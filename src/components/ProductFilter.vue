@@ -2,7 +2,7 @@
   <aside class='filter'>
     <h2 class='filter__title'>Фильтры</h2>
 
-    <form class='filter__form form' action='#' method='get'>
+    <form class='filter__form form' @submit.prevent="submitFilter">
       <fieldset class='form__block'>
         <legend class='form__legend'>Цена</legend>
         <label class='form__label form__label--price'>
@@ -21,9 +21,9 @@
           <select class='form__select' v-model.number='currentCategoryId'>
             <option value='0'>Все категории</option>
             <option
-              :value='category.categoryId'
+              :value='category.id'
               v-for='category in categories'
-              :key='category.categoryId'
+              :key='category.id'
             >
               {{ category.title }}
             </option>
@@ -48,8 +48,7 @@
 
 <script>
 import ColorsControl from '@/components/controls/ColorsControl.vue'
-import categories from '@/data/categories'
-import colorBase from '@/data/colorsBase'
+import axios from '@/helpers/axiosConfig'
 
 export default {
   name: 'ProductFilter',
@@ -61,7 +60,9 @@ export default {
       currentPriceFrom: 0,
       currentPriceTo: 0,
       currentCategoryId: 0,
-      currentSelectedColor: null
+      currentSelectedColor: null,
+      categoriesData: null,
+      colorsData: null
     }
   },
   props: {
@@ -72,10 +73,12 @@ export default {
   },
   computed: {
     categories () {
-      return categories
+      return this.categoriesData ? this.categoriesData.items : null
     },
     colorsBase () {
-      return colorBase
+      return this.colorsData
+        ? this.colorsData.items.filter(color => !color.title.includes('script'))
+        : null
     }
   },
   watch: {
@@ -105,7 +108,35 @@ export default {
       this.$emit('update:priceTo', 0)
       this.$emit('update:categoryId', 0)
       this.$emit('update:selectedColor', null)
+    },
+    getCategories () {
+      this.$store.commit('setIsLoading', true)
+      axios.get('productCategories/')
+        .then(response => {
+          this.categoriesData = response.data
+        })
+        .catch(() => this.$store.commit('setMessage', {
+          modalContent: 'Что-то пошло не так, повторите запрос позднее',
+          modalType: 'error'
+        }))
+        .finally(() => this.$store.commit('setIsLoading', false))
+    },
+    getColors () {
+      this.$store.commit('setIsLoading', true)
+      axios.get('colors/')
+        .then(response => {
+          this.colorsData = response.data
+        })
+        .catch(() => this.$store.commit('setMessage', {
+          modalContent: 'Что-то пошло не так, повторите запрос позднее',
+          modalType: 'error'
+        }))
+        .finally(() => this.$store.commit('setIsLoading', false))
     }
+  },
+  created () {
+    this.getCategories()
+    this.getColors()
   }
 }
 </script>

@@ -7,30 +7,8 @@
     <section class="item">
       <div class="item__pics pics">
         <div class="pics__wrapper">
-          <img width="570" height="570" :src='product.src' :alt='product.title'>
+          <img width="570" height="570" :src='product.image.file.url' :alt='product.title'>
         </div>
-        <ul class="pics__list">
-          <li class="pics__item">
-            <a href="" class="pics__link pics__link--current">
-              <img width="98" height="98" :src='product.src' :alt='product.title'>
-            </a>
-          </li>
-          <li class="pics__item">
-            <a href="" class="pics__link">
-              <img width="98" height="98" :src='product.src' :alt='product.title'>
-            </a>
-          </li>
-          <li class="pics__item">
-            <a href="" class="pics__link">
-              <img width="98" height="98" :src='product.src' :alt='product.title'>
-            </a>
-          </li>
-          <li class="pics__item">
-            <a class="pics__link" href="#">
-              <img width="98" height="98" :src='product.src' :alt='product.title'>
-            </a>
-          </li>
-        </ul>
       </div>
 
       <div class="item__info">
@@ -52,37 +30,6 @@
               />
             </fieldset>
 
-            <!-- <fieldset class="form__block">
-              <legend class="form__legend">Объемб в ГБ:</legend>
-
-              <ul class="sizes sizes--primery">
-                <li class="sizes__item">
-                  <label class="sizes__label">
-                    <input class="sizes__radio sr-only" type="radio" name="sizes-item" value="32">
-                    <span class="sizes__value">
-                      32gb
-                    </span>
-                  </label>
-                </li>
-                <li class="sizes__item">
-                  <label class="sizes__label">
-                    <input class="sizes__radio sr-only" type="radio" name="sizes-item" value="64">
-                    <span class="sizes__value">
-                      64gb
-                    </span>
-                  </label>
-                </li>
-                <li class="sizes__item">
-                  <label class="sizes__label">
-                    <input class="sizes__radio sr-only" type="radio" name="sizes-item" value="128" checked="">
-                    <span class="sizes__value">
-                      128gb
-                    </span>
-                  </label>
-                </li>
-              </ul>
-            </fieldset> -->
-
             <div class="item__row">
               <product-counter
                 v-model:amount='productAmount'
@@ -96,72 +43,34 @@
       </div>
 
       <div class="item__desc">
-        <ul class="tabs">
-          <li class="tabs__item">
-            <a class="tabs__link tabs__link--current">
-              Описание
-            </a>
-          </li>
-          <li class="tabs__item">
-            <a class="tabs__link" href="#">
-              Характеристики
-            </a>
-          </li>
-          <li class="tabs__item">
-            <a class="tabs__link" href="#">
-              Гарантия
-            </a>
-          </li>
-          <li class="tabs__item">
-            <a class="tabs__link" href="#">
-              Оплата и доставка
-            </a>
-          </li>
-        </ul>
-
-        <div class="item__content">
-          <p>
-            Навигация GPS, ГЛОНАСС, BEIDOU Galileo и QZSS<br>
-            Синхронизация со смартфоном<br>
-            Связь по Bluetooth Smart, ANT+ и Wi-Fi<br>
-            Поддержка сторонних приложений<br>
-          </p>
-
-          <a href="#">
-            Все характеристики
-          </a>
-
-          <h3>Что это?</h3>
-
-          <p>
-            Wahoo ELEMNT BOLT GPS – это велокомпьютер, который позволяет оптимизировать свои велотренировки, сделав их максимально эффективными. Wahoo ELEMNT BOLT GPS синхронизируется с датчиками по ANT+, объединяя полученную с них информацию. Данные отображаются на дисплее, а также сохраняются на смартфоне. При этом на мобильное устройство можно установить как фирменное приложение, так и различные приложения сторонних разработчиков. Велокомпьютер точно отслеживает местоположение, принимая сигнал с целого комплекса спутников. Эта информация позволяет смотреть уже преодоленные маршруты и планировать новые велопрогулки.
-          </p>
-
-          <h3>Дизайн</h3>
-
-          <p>
-            Велокомпьютер Wahoo ELEMNT BOLT очень компактный. Размеры устройства составляют всего 74,6 x 47,3 x 22,1 мм. что не превышает габариты смартфона. Корпус гаджета выполнен из черного пластика. На обращенной к пользователю стороне расположен дисплей диагональю 56 мм. На дисплей выводятся координаты и скорость, а также полученная со смартфона и синхронизированных датчиков информация: интенсивность, скорость вращения педалей, пульс и т.д. (датчики не входят в комплект поставки). Корпус велокомпьютера имеет степень защиты от влаги IPX7. Это означает, что устройство не боится пыли, а также выдерживает кратковременное (до 30 минут) погружение в воду на глубину не более 1 метра.
-          </p>
-        </div>
+        <empty-request
+          v-if='!product.content'
+          text="Описание товара не найдено."
+        />
+        {{ product.content }}
       </div>
     </section>
   </main>
 </template>
 
 <script>
-import products from '@/data/products'
-import categories from '@/data/categories'
 import ColorsControl from '@/components/controls/ColorsControl.vue'
 import BreadCrumbs from '@/components/controls/BreadCrumbs.vue'
 import { numberFormat } from '@/helpers/formatHelpers'
 import ProductCounter from '../components/controls/ProductCounter.vue'
+import axios from '@/helpers/axiosConfig'
+import { ref, watch } from 'vue'
+import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
+import EmptyRequest from '../components/misc/EmptyRequest.vue'
 
 export default {
   name: 'ProductPage',
   components: {
     ColorsControl,
     BreadCrumbs,
-    ProductCounter
+    ProductCounter,
+    EmptyRequest
   },
   props: {
     pageParams: {
@@ -171,18 +80,13 @@ export default {
   },
   computed: {
     product () {
-      return products.find(product => product.id === +this.$route.params.id)
-    },
-    category () {
-      if (!this.product) return null
-      return categories.find(category => category.categoryId === this.product.categoryId)
+      return this.currentProductData
     },
     formatedPrice () {
       return numberFormat(this.product.price)
     },
     breadcrumbsName () {
-      if (!this.category) return ''
-      return `каталог/ ${this.category.title}/ ${this.product.title}`
+      return `каталог/ ${this.product.category.title}/ ${this.product.title}`
     }
   },
   data () {
@@ -199,11 +103,43 @@ export default {
       )
     }
   },
-  watch: {
-    '$route.params.id' () {
-      if (this.$route.path.includes('product') && !this.product) {
-        this.$router.replace({ name: 'notFound' })
+  setup () {
+    const store = useStore()
+    const route = useRoute()
+
+    const curentId = ref(route.params.id)
+
+    const currentProductData = ref(null)
+
+    function getCurrentProduct () {
+      store.commit('setIsLoading', true)
+      axios.get(`products/${curentId.value}`)
+        .then(response => {
+          currentProductData.value = response.data
+        })
+        .catch((err) => {
+          store.commit('setMessage', {
+            modalContent: `${err.response.data.error.message}`,
+            modalType: 'error'
+          })
+        })
+        .finally(() => store.commit('setIsLoading', false))
+    }
+
+    getCurrentProduct()
+
+    watch(
+      () => route.params,
+      async newParams => {
+        curentId.value = newParams.id
+        if (curentId.value) {
+          getCurrentProduct()
+        }
       }
+    )
+
+    return {
+      currentProductData
     }
   }
 }

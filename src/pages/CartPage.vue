@@ -16,6 +16,10 @@
     <section class="cart">
       <form class="cart__form form" action="#" method="POST">
         <div class="cart__field">
+          <empty-request
+            v-if="totalCount === 0"
+            text="В корзине нет товаров. Сделайте ваш заказ."
+          />
           <ul class="cart__list">
             <cart-item
               v-for="item in products"
@@ -33,7 +37,11 @@
             Итого: <span>{{ formatedTotalPrice }} ₽</span>
           </p>
 
-          <button class="cart__button button button--primery" type="submit">
+          <button
+            class="cart__button button button--primery"
+            type="submit"
+            :disabled='totalCount === 0'
+          >
             Оформить заказ
           </button>
         </div>
@@ -47,12 +55,14 @@ import BreadCrumbs from '@/components/controls/BreadCrumbs.vue'
 import CartItem from '@/components/CartItem.vue'
 import { mapGetters } from 'vuex'
 import { numberFormat } from '@/helpers/formatHelpers'
+import EmptyRequest from '../components/misc/EmptyRequest.vue'
 
 export default {
   name: 'CartPage',
   components: {
     BreadCrumbs,
-    CartItem
+    CartItem,
+    EmptyRequest
   },
   computed: {
     ...mapGetters({

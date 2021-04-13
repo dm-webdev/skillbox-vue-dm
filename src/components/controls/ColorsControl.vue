@@ -1,6 +1,6 @@
 <template>
   <ul class='colors'>
-    <li class='colors__item' v-for='color in colors' :key='color.id'>
+    <li class='colors__item' v-for='color in colorPalette' :key='color.id'>
       <label class='colors__label'>
         <input
           class='colors__radio sr-only'
@@ -8,15 +8,13 @@
           :value='color.id'
           v-model='currentSelectedColor'
         >
-        <span class='colors__value' :style='{backgroundColor: color.HEX}'>
-        </span>
+        <span class='colors__value' :style='{backgroundColor: color.code}' :title='color.title' />
       </label>
     </li>
   </ul>
 </template>
 
 <script>
-import colorBase from '@/data/colorsBase'
 
 export default {
   name: 'ColorsControl',
@@ -41,18 +39,13 @@ export default {
       set (value) {
         this.$emit('update:selectedColor', value)
       }
-    },
-    colors () {
-      const colors = []
-      for (const iColor of this.colorPalette) {
-        for (const color of colorBase) {
-          if (color.id === iColor.id) {
-            colors.push(color)
-          }
-        }
-      }
-      return colors
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+  .colors__value {
+    border: 1px solid #000000;
+  }
+</style>

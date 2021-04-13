@@ -16,11 +16,14 @@
       />
 
       <section class='catalog'>
+        <empty-request
+          v-if='products?.length === 0'
+          text="По Вашему запросу ничего не найдено."
+        />
+
         <product-list
           :products='products'
         />
-
-        <h2 v-if='filteredProducts.length === 0'>По Вашему запросу ничего не найдено ¯\_(ツ)_/¯</h2>
 
         <base-pagination
           v-model:current-page='currentPage'
@@ -33,58 +36,82 @@
 </template>
 
 <script>
-import products from '@/data/products'
 import ProductList from '@/components/ProductList.vue'
 import BasePagination from '@/components/controls/BasePagination.vue'
 import ProductFilter from '@/components/ProductFilter.vue'
+import EmptyRequest from '@/components/misc/EmptyRequest.vue'
+import axios from '@/helpers/axiosConfig'
+import { ref, watch } from 'vue'
+import { useStore } from 'vuex'
 
 export default {
   name: 'MainPage',
   components: {
     ProductList,
     BasePagination,
-    ProductFilter
-  },
-  data () {
-    return {
-      currentPage: 1,
-      productsPerPage: 6,
-      filterPriceFrom: 0,
-      filterPriceTo: 0,
-      filterCategoryId: 0,
-      filterColor: null
-    }
+    ProductFilter,
+    EmptyRequest
   },
   computed: {
-    filteredProducts () {
-      let filteredProducts = products
-      if (this.filterPriceFrom > 0) {
-        filteredProducts = filteredProducts.filter(product => product.price > this.filterPriceFrom)
-      }
-      if (this.filterPriceTo > 0) {
-        filteredProducts = filteredProducts.filter(product => product.price < this.filterPriceTo)
-      }
-      if (this.filterCategoryId) {
-        filteredProducts = filteredProducts.filter(product => product.categoryId === this.filterCategoryId)
-      }
-      if (this.filterColor) {
-        filteredProducts = filteredProducts.filter(product => product.colors.find(color => color.id === this.filterColor))
-      }
-      this.goToFirstPage()
-
-      return filteredProducts
-    },
     products () {
-      const offset = (this.currentPage - 1) * this.productsPerPage
-      return this.filteredProducts.slice(offset, offset + this.productsPerPage)
+      return this.productsData ? this.productsData.items : null
     },
     totalProductsCount () {
-      return this.filteredProducts.length
+      return this.productsData ? this.productsData.pagination.total : 0
     }
   },
   methods: {
     goToFirstPage () {
       this.currentPage = 1
+    }
+  },
+  setup () {
+    const store = useStore()
+
+    const filterPriceFrom = ref(0)
+    const filterPriceTo = ref(0)
+    const filterCategoryId = ref(0)
+    const filterColor = ref(null)
+    const productsData = ref(null)
+    const currentPage = ref(1)
+    const productsPerPage = ref(6)
+
+    function loadProducts () {
+      store.commit('setIsLoading', true)
+      axios.get('products/', {
+        params: {
+          page: currentPage.value,
+          limit: productsPerPage.value,
+          categoryId: filterCategoryId.value,
+          colorId: filterColor.value,
+          minPrice: filterPriceFrom.value,
+          maxPrice: filterPriceTo.value
+        }
+      })
+        .then(response => {
+          productsData.value = response.data
+        })
+        .catch(() => store.commit('setMessage', {
+          modalContent: 'Что-то пошло не так, повторите запрос позднее',
+          modalType: 'error'
+        }))
+        .finally(() => store.commit('setIsLoading', false))
+    }
+
+    loadProducts()
+
+    watch([currentPage, filterCategoryId, filterColor, filterPriceFrom, filterPriceTo], () => {
+      loadProducts()
+    })
+
+    return {
+      filterPriceFrom,
+      filterPriceTo,
+      filterCategoryId,
+      filterColor,
+      productsData,
+      currentPage,
+      productsPerPage
     }
   }
 }

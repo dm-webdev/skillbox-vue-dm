@@ -16,7 +16,7 @@ export const routes = [
   },
   {
     name: 'product',
-    path: '/product/:id(\\d+)?',
+    path: '/product/:id',
     component: ProductPage,
     meta: { title: 'продукт' }
   },

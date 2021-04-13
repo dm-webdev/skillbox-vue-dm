@@ -8,7 +8,12 @@ export const store = createStore({
     return {
       cartProducts: [
         // { productId: 1, amount: 2, colorId: 143 }
-      ]
+      ],
+      apiConnection: {
+        isLoading: false,
+        modalContent: null,
+        modalType: null
+      }
     }
   },
   mutations: {
@@ -28,6 +33,13 @@ export const store = createStore({
     },
     deleteCartProduct (state, { productId, colorId }) {
       state.cartProducts = state.cartProducts.filter(item => !(item.productId === productId && item.colorId === colorId))
+    },
+    setMessage (state, { modalContent, modalType }) {
+      state.apiConnection.modalContent = modalContent
+      state.apiConnection.modalType = modalType
+    },
+    setIsLoading (state, isLoading) {
+      state.apiConnection.isLoading = isLoading
     }
   },
   getters: {
@@ -39,7 +51,7 @@ export const store = createStore({
           ...item,
           product,
           color,
-          colorName: capitalizeFirstLetter(color.name),
+          colorName: capitalizeFirstLetter(color.title),
           totalProductPrice: numberFormat(product.price * item.amount)
         }
       })

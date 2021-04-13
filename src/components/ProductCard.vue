@@ -2,9 +2,9 @@
   <div>
     <router-link
       class='catalog__pic'
-      :to="{ name: 'product', params: {id: product.id} }"
+      :to="{ name: 'product', params: {id: product.slug} }"
     >
-      <img :src='product.src' :alt='product.title' />
+      <img :src='product.image.file.url' :alt='product.title' />
     </router-link>
 
     <h3 class='catalog__title'>
@@ -47,3 +47,18 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+  .catalog__title {
+    a {
+      display: block;
+      display: -webkit-box;
+      overflow: hidden;
+      -webkit-line-clamp: 1;
+      text-overflow: ellipsis;
+      -webkit-box-orient: vertical;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+  }
+</style>

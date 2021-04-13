@@ -23,6 +23,9 @@
           {{ pageNumber }}
         </a>
       </li>
+
+      <li class='pagination__item' v-if="!pages">0</li>
+
       <li class='pagination__item'>
         <a
           class='pagination__link pagination__link--arrow'

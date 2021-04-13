@@ -1,18 +1,22 @@
 export default [
   {
-    categoryId: 1,
-    title: 'Компьютерная техника'
+    id: 1,
+    title: 'Компьютерная техника',
+    slug: 'hello'
   },
   {
-    categoryId: 2,
-    title: 'Кухонная техника'
+    id: 2,
+    title: 'Кухонная техника',
+    slug: 'hello'
   },
   {
-    categoryId: 3,
-    title: 'Техника для дома'
+    id: 3,
+    title: 'Техника для дома',
+    slug: 'hello'
   },
   {
-    categoryId: 4,
-    title: 'Разное'
+    id: 4,
+    title: 'Разное',
+    slug: 'hello'
   }
 ]
