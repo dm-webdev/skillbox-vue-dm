@@ -48,15 +48,15 @@ export default {
   props: {
     currentPage: {
       type: Number,
-      requires: true
+      required: true
     },
     totalCount: {
       type: Number,
-      requires: true
+      required: true
     },
     countPerPage: {
       type: Number,
-      requires: true
+      required: true
     }
   },
   emits: ['update:currentPage'],

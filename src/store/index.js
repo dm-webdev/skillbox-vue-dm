@@ -14,7 +14,8 @@ export const store = createStore({
       },
       currentUser: {
         accessKey: null,
-        cartProducts: []
+        cartProducts: [],
+        currentOrderInfo: null
       }
     }
   },
@@ -40,6 +41,9 @@ export const store = createStore({
     },
     updateCartProducts (state, items) {
       state.currentUser.cartProducts = items
+    },
+    setOrderInfo (state, orderInfo) {
+      state.currentUser.currentOrderInfo = orderInfo
     }
   },
   getters: {
@@ -60,6 +64,12 @@ export const store = createStore({
     },
     getState (state) {
       return state
+    },
+    getCurrentOrderInfo (state) {
+      return state.currentUser.currentOrderInfo
+    },
+    getTotalCountOfOrder (state) {
+      return state.currentUser.currentOrderInfo?.basket.items.reduce((sum, item) => sum + item.quantity, 0)
     }
   },
   actions: {
@@ -167,6 +177,24 @@ export const store = createStore({
         .finally(() => {
           context.commit('setIsLoading', false)
           context.commit('setIsCartLoading', false)
+        })
+    },
+    getCurrentOrderInfo (context, orderId) {
+      context.commit('setIsLoading', true)
+      return axios.get(`orders/${orderId}`, {
+        params: {
+          userAccessKey: context.state.currentUser.accessKey
+        }
+      })
+        .then(response => {
+          context.commit('setOrderInfo', response.data)
+        })
+        .catch(() => context.commit('setMessage', {
+          modalContent: 'Что-то пошло не так, повторите запрос позднее',
+          modalType: 'error'
+        }))
+        .finally(() => {
+          context.commit('setIsLoading', false)
         })
     }
   }

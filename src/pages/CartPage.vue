@@ -37,13 +37,22 @@
             Итого: <span>{{ formatedTotalPrice }} ₽</span>
           </p>
 
-          <button
+          <error-field
+            v-if='totalCount === 0 || $store.state.apiConnection.isLoading'
+            class='error-text'
+            title='ваша корзина пуста'
+            description='Для оформления заказа, выбирите товар'
+          />
+
+          <router-link
+            v-else
             class="cart__button button button--primery"
+            tag="button"
             type="submit"
-            :disabled='totalCount === 0 || $store.state.apiConnection.isLoading'
+            :to="{ name: 'order' }"
           >
             Оформить заказ
-          </button>
+          </router-link>
         </div>
       </form>
     </section>
@@ -56,13 +65,15 @@ import CartItem from '@/components/CartItem.vue'
 import { mapGetters } from 'vuex'
 import { numberFormat } from '@/helpers/formatHelpers'
 import EmptyRequest from '../components/misc/EmptyRequest.vue'
+import ErrorField from '../components/misc/ErrorField.vue'
 
 export default {
   name: 'CartPage',
   components: {
     BreadCrumbs,
     CartItem,
-    EmptyRequest
+    EmptyRequest,
+    ErrorField
   },
   computed: {
     ...mapGetters({
@@ -79,3 +90,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+  .error-text {
+    color: #FFFFFF;
+  }
+</style>

@@ -13,7 +13,6 @@
 
       <cart-indicator />
     </div>
-    <button type="button" @click="showState" class="hi">show</button>
   </header>
 </template>
 
@@ -28,17 +27,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      state: 'getState',
       total: 'cartDetailProducts'
     })
-  },
-  methods: {
-    showState () {
-      console.log(this.state.currentUser)
-      console.log(this.state.currentUser.cartProducts)
-      console.log(this.state.apiConnection)
-      console.log(this.total)
-    }
   }
 }
 </script>

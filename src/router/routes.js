@@ -2,6 +2,8 @@ import MainPage from '@/pages/MainPage.vue'
 import ProductPage from '@/pages/ProductPage.vue'
 import NotFoundPage from '@/pages/NotFoundPage.vue'
 import CartPage from '@/pages/CartPage.vue'
+import OrderPage from '@/pages/OrderPage.vue'
+import OrderInfoPage from '@/pages/OrderInfoPage.vue'
 
 export const routes = [
   {
@@ -25,6 +27,18 @@ export const routes = [
     path: '/cart',
     component: CartPage,
     meta: { title: 'корзина' }
+  },
+  {
+    name: 'order',
+    path: '/order',
+    component: OrderPage,
+    meta: { title: 'оформление заказа' }
+  },
+  {
+    name: 'orderInfo',
+    path: '/order/info/:orderId',
+    component: OrderInfoPage,
+    meta: { title: 'заказ' }
   },
   {
     name: 'notFound',
