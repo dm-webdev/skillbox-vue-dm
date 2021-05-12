@@ -9,3 +9,9 @@ export function capitalizeFirstLetter (str) {
   if (!str) return null
   return `${str[0].toUpperCase()}${str.substr(1)}`
 }
+
+export function normalizeString (string) {
+  if (typeof string === 'string') {
+    return string.toLowerCase().replace(/ё/g, 'е')
+  }
+}

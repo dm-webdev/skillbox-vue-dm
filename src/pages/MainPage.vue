@@ -1,9 +1,7 @@
 <template>
     <main class='content container'>
     <div class='content__top content__top--catalog'>
-      <h1 class='content__title'>
-        Каталог
-      </h1>
+      <h1 class='content__title'>Каталог</h1>
       <span class='content__info'>{{ totalProductsCount }} товаров</span>
     </div>
 
@@ -12,7 +10,7 @@
         v-model:price-from='filterPriceFrom'
         v-model:price-to='filterPriceTo'
         v-model:category-id='filterCategoryId'
-        v-model:selected-color='filterColor'
+        v-model:selected-props='filterProps'
       />
 
       <section class='catalog'>
@@ -71,10 +69,10 @@ export default {
     const filterPriceFrom = ref(0)
     const filterPriceTo = ref(0)
     const filterCategoryId = ref(0)
-    const filterColor = ref(null)
+    const filterProps = ref(null)
     const productsData = ref(null)
     const currentPage = ref(1)
-    const productsPerPage = ref(6)
+    const productsPerPage = ref(12)
 
     function loadProducts () {
       store.commit('setIsLoading', true)
@@ -83,9 +81,9 @@ export default {
           page: currentPage.value,
           limit: productsPerPage.value,
           categoryId: filterCategoryId.value,
-          colorId: filterColor.value,
-          minPrice: filterPriceFrom.value,
-          maxPrice: filterPriceTo.value
+          // props: filterProps.value,
+          minPrice: filterPriceFrom.value || null,
+          maxPrice: filterPriceTo.value || null
         }
       })
         .then(response => {
@@ -100,7 +98,7 @@ export default {
 
     loadProducts()
 
-    watch([currentPage, filterCategoryId, filterColor, filterPriceFrom, filterPriceTo], () => {
+    watch([currentPage, filterCategoryId, filterProps, filterPriceFrom, filterPriceTo], () => {
       loadProducts()
     })
 
@@ -108,7 +106,7 @@ export default {
       filterPriceFrom,
       filterPriceTo,
       filterCategoryId,
-      filterColor,
+      filterProps,
       productsData,
       currentPage,
       productsPerPage

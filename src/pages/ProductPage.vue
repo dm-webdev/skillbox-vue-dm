@@ -7,7 +7,7 @@
     <section class="item">
       <div class="item__pics pics">
         <div class="pics__wrapper">
-          <img width="570" height="570" :src='product.image.file.url' :alt='product.title'>
+          <img width="570" height="570" :src='product.preview?.file.url' :alt='product.title'>
         </div>
       </div>
 
@@ -42,13 +42,15 @@
         </div>
       </div>
 
-      <div class="item__desc">
+      <accordion-product :productData="product" />
+
+      <!-- <div class="item__desc">
         <empty-request
           v-if='!product.content'
           text="Описание товара не найдено."
         />
         {{ product.content }}
-      </div>
+      </div> -->
     </section>
   </main>
 </template>
@@ -62,7 +64,8 @@ import axios from '@/helpers/axiosConfig'
 import { ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
-import EmptyRequest from '../components/misc/EmptyRequest.vue'
+// import EmptyRequest from '../components/misc/EmptyRequest.vue'
+import AccordionProduct from '../components/misc/AccordionProduct.vue'
 
 export default {
   name: 'ProductPage',
@@ -70,7 +73,8 @@ export default {
     ColorsControl,
     BreadCrumbs,
     ProductCounter,
-    EmptyRequest
+    // EmptyRequest,
+    AccordionProduct
   },
   props: {
     pageParams: {

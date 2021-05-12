@@ -31,15 +31,20 @@
         </label>
       </fieldset>
 
-      <fieldset class='form__block'>
-        <legend class='form__legend'>Цвет</legend>
-        <colors-control :color-palette='colorsBase' v-model:selected-color='currentSelectedColor' />
-      </fieldset>
+      <filter-props-constructor
+        :props-data='currentCategoryProps'
+        v-model:selected-props='currentSelectedProps'
+      />
 
       <button class='filter__submit button button--primery' type='submit' @click.prevent='submitFilter'>
         Применить
       </button>
-      <button class='filter__reset button button--second' type='button' @click.prevent='cleanFilter'>
+      <button
+        v-if='isCleanBtnHide'
+        class='filter__reset button button--second'
+        type='button'
+        @click.prevent='cleanFilter'
+      >
         Сбросить
       </button>
     </form>
@@ -47,38 +52,62 @@
 </template>
 
 <script>
-import ColorsControl from '@/components/controls/ColorsControl.vue'
 import axios from '@/helpers/axiosConfig'
+import FilterPropsConstructor from './controls/FilterPropsConstructor.vue'
+import { ref, watch } from 'vue'
 
 export default {
   name: 'ProductFilter',
   components: {
-    ColorsControl
-  },
-  data () {
-    return {
-      currentPriceFrom: 0,
-      currentPriceTo: 0,
-      currentCategoryId: 0,
-      currentSelectedColor: null,
-      categoriesData: null,
-      colorsData: null
-    }
+    FilterPropsConstructor
   },
   props: {
     priceFrom: Number,
     priceTo: Number,
     categoryId: Number,
-    selectedColor: String
+    selectedProps: String
   },
   computed: {
     categories () {
       return this.categoriesData ? this.categoriesData.items : null
-    },
-    colorsBase () {
-      return this.colorsData
-        ? this.colorsData.items.filter(color => !color.title.includes('script'))
-        : null
+    }
+  },
+  setup () {
+    const currentPriceFrom = ref(0)
+    const currentPriceTo = ref(0)
+    const currentCategoryId = ref(0)
+    const currentSelectedProps = ref({})
+    const isCleanBtnHide = ref(false)
+
+    watch([currentPriceFrom, currentPriceTo, currentCategoryId], (values) => {
+      if (values.some(item => item > 0 && item !== '')) {
+        isCleanBtnHide.value = true
+      } else {
+        isCleanBtnHide.value = false
+      }
+    })
+
+    function cleanFilter () {
+      currentPriceFrom.value = 0
+      currentPriceTo.value = 0
+      currentCategoryId.value = 0
+      currentSelectedProps.value = {}
+      isCleanBtnHide.value = false
+    }
+
+    return {
+      currentPriceFrom,
+      currentPriceTo,
+      currentCategoryId,
+      currentSelectedProps,
+      isCleanBtnHide,
+      cleanFilter
+    }
+  },
+  data () {
+    return {
+      categoriesData: null,
+      currentCategoryProps: null
     }
   },
   watch: {
@@ -91,23 +120,20 @@ export default {
     categoryId (value) {
       this.currentCategoryId = value
     },
-    selectedColor (value) {
-      this.currentSelectedColor = value
+    currentCategoryId (value) {
+      if (value) {
+        this.getCategorieProps(value)
+      } else {
+        this.currentCategoryProps = {}
+      }
     }
-
   },
   methods: {
     submitFilter () {
       this.$emit('update:priceFrom', this.currentPriceFrom)
       this.$emit('update:priceTo', this.currentPriceTo)
       this.$emit('update:categoryId', this.currentCategoryId)
-      this.$emit('update:selectedColor', this.currentSelectedColor)
-    },
-    cleanFilter () {
-      this.$emit('update:priceFrom', 0)
-      this.$emit('update:priceTo', 0)
-      this.$emit('update:categoryId', 0)
-      this.$emit('update:selectedColor', null)
+      this.$emit('update:selectedProps', this.currentSelectedProps)
     },
     getCategories () {
       this.$store.commit('setIsLoading', true)
@@ -121,11 +147,11 @@ export default {
         }))
         .finally(() => this.$store.commit('setIsLoading', false))
     },
-    getColors () {
+    getCategorieProps (id) {
       this.$store.commit('setIsLoading', true)
-      axios.get('colors/')
+      axios.get(`productCategories/${id}`)
         .then(response => {
-          this.colorsData = response.data
+          this.currentCategoryProps = response.data
         })
         .catch(() => this.$store.commit('setMessage', {
           modalContent: 'Что-то пошло не так, повторите запрос позднее',
@@ -136,7 +162,6 @@ export default {
   },
   created () {
     this.getCategories()
-    this.getColors()
   }
 }
 </script>

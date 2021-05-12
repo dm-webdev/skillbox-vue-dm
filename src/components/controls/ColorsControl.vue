@@ -4,8 +4,8 @@
       <label class='colors__label'>
         <input
           class='colors__radio sr-only'
-          type='radio'
-          :value='color.id'
+          :type='inputType'
+          :value='color.title'
           v-model='currentSelectedColor'
         >
         <span class='colors__value' :style='{backgroundColor: color.code}' :title='color.title' />
@@ -23,15 +23,21 @@ export default {
       type: Object,
       requared: true
     },
-    selectedColor: Number
+    inputType: {
+      type: String,
+      requared: true
+    },
+    selectedColor: {
+      requared: false
+    }
   },
   emits: ['update:selectedColor'],
   computed: {
     currentSelectedColor: {
       get () {
-        if (this.selectedColor === -1) {
-          this.$emit('update:selectedColor', this.colorPalette[0].id)
-          return this.colorPalette[0].id
+        if (this.selectedColor === '-1' && this.inputType === 'radio') {
+          this.$emit('update:selectedColor', this.colorPalette[0].title)
+          return this.colorPalette[0].title
         } else {
           return this.selectedColor
         }
