@@ -10,14 +10,14 @@
       </li>
     </ul>
 
-    <div class="item__content">
-      <empty-request
-        v-if='!currentContent.content'
-        :text="`${currentContent.title} товара не найдено.`"
-      />
+    <empty-request
+      v-if='!currentContent.content'
+      :text="`${currentContent.title} товара не найдено.`"
+    />
+    <div v-else class="item__content">
       <p v-if="typeof currentContent.content === 'string'">{{ currentContent.content }}</p>
 
-      <ul v-if="typeof currentContent.content === 'object'">
+      <ul v-else-if="typeof currentContent.content === 'object'">
         <li v-for='property, index in currentContent.content' :key='index'>
           <h3>{{ property.title }}</h3>
           <p>{{ property.value }}</p>
@@ -74,3 +74,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+  a {
+    cursor: pointer;
+  }
+</style>

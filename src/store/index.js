@@ -97,12 +97,13 @@ export const store = createStore({
           context.commit('setIsCartLoading', false)
         })
     },
-    addToCart (context, { productId, amount }) {
+    addToCart (context, { productOfferId, colorId, quantity }) {
       context.commit('setIsLoading', true)
       context.commit('setIsCartLoading', true)
       return axios.post('baskets/products', {
-        productId,
-        quantity: amount
+        productOfferId,
+        colorId,
+        quantity
       }, {
         params: {
           userAccessKey: context.state.currentUser.accessKey
