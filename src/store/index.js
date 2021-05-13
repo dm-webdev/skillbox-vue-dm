@@ -1,6 +1,6 @@
 import { createStore } from 'vuex'
-import { numberFormat, capitalizeFirstLetter } from '@/helpers/formatHelpers'
 import axios from '@/helpers/axiosConfig'
+import { getIsColor, getOrderMainImg, getOrderPropTitle, getOrderPropValue } from './utils'
 
 export const store = createStore({
   state () {
@@ -51,8 +51,11 @@ export const store = createStore({
       return state.currentUser.cartProducts.map(item => {
         return {
           ...item,
-          colorName: capitalizeFirstLetter(item.product.colors[0].title),
-          totalProductPrice: numberFormat(item.price * item.quantity)
+          isColor: getIsColor(item),
+          propTitle: getOrderPropTitle(item),
+          propValue: getOrderPropValue(item),
+          img: getOrderMainImg(item),
+          totalProductPrice: item.price * item.quantity
         }
       })
     },
@@ -60,7 +63,7 @@ export const store = createStore({
       return getters.cartDetailProducts.reduce((sum, item) => sum + item.quantity, 0)
     },
     cartTotalPrice (state, getters) {
-      return getters.cartDetailProducts.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+      return getters.cartDetailProducts.reduce((sum, item) => sum + item.totalProductPrice, 0)
     },
     getState (state) {
       return state
@@ -130,7 +133,7 @@ export const store = createStore({
         context.commit('setIsLoading', true)
         context.commit('setIsCartLoading', true)
         return axios.put('baskets/products', {
-          productId,
+          basketItemId: productId,
           quantity: amount
         }, {
           params: {
@@ -160,7 +163,7 @@ export const store = createStore({
           userAccessKey: context.state.currentUser.accessKey
         },
         data: {
-          productId: productId
+          basketItemId: productId
         }
       })
         .then(response => {

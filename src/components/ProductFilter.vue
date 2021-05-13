@@ -65,14 +65,14 @@ export default {
     priceFrom: Number,
     priceTo: Number,
     categoryId: Number,
-    selectedProps: String
+    selectedProps: Object
   },
   computed: {
     categories () {
       return this.categoriesData ? this.categoriesData.items : null
     }
   },
-  setup () {
+  setup (props, context) {
     const currentPriceFrom = ref(0)
     const currentPriceTo = ref(0)
     const currentCategoryId = ref(0)
@@ -93,6 +93,14 @@ export default {
       currentCategoryId.value = 0
       currentSelectedProps.value = {}
       isCleanBtnHide.value = false
+      submitFilter()
+    }
+
+    function submitFilter () {
+      context.emit('update:priceFrom', currentPriceFrom.value)
+      context.emit('update:priceTo', currentPriceTo.value)
+      context.emit('update:categoryId', currentCategoryId.value)
+      context.emit('update:selectedProps', currentSelectedProps.value)
     }
 
     return {
@@ -101,7 +109,8 @@ export default {
       currentCategoryId,
       currentSelectedProps,
       isCleanBtnHide,
-      cleanFilter
+      cleanFilter,
+      submitFilter
     }
   },
   data () {
@@ -129,12 +138,6 @@ export default {
     }
   },
   methods: {
-    submitFilter () {
-      this.$emit('update:priceFrom', this.currentPriceFrom)
-      this.$emit('update:priceTo', this.currentPriceTo)
-      this.$emit('update:categoryId', this.currentCategoryId)
-      this.$emit('update:selectedProps', this.currentSelectedProps)
-    },
     getCategories () {
       this.$store.commit('setIsLoading', true)
       axios.get('productCategories/')

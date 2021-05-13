@@ -34,11 +34,11 @@
             Мы&nbsp;посчитаем стоимость доставки на&nbsp;следующем этапе
           </p>
           <p class="cart__price">
-            Итого: <span>{{ formatedTotalPrice }} ₽</span>
+            Итого: <span>{{ numberFormat(totalPrice) }} ₽</span>
           </p>
 
           <error-field
-            v-if='totalCount === 0 || $store.state.apiConnection.isLoading'
+            v-if='totalCount === 0'
             class='error-text'
             title='ваша корзина пуста'
             description='Для оформления заказа, выбирите товар'
@@ -81,11 +81,13 @@ export default {
       totalCount: 'productInCartCount',
       totalPrice: 'cartTotalPrice'
     }),
-    formatedTotalPrice () {
-      return numberFormat(this.totalPrice)
-    },
     breadcrumbsName () {
       return 'каталог/корзина'
+    }
+  },
+  methods: {
+    numberFormat (value) {
+      return numberFormat(value)
     }
   }
 }

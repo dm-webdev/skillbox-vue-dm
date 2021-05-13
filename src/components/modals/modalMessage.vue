@@ -14,13 +14,16 @@
           class="modal__close__btn"
           aria-label="закрыть окно"
         >
-          <span class="close__btn_decorator" />
+          <div>
+            <span class="close__btn_decorator" />
+          </div>
         </button>
 
         <div class="modal__content">
           <span class="modal-img" :style="{ backgroundImage: `url(${currentImg})` }" />
           <p class="modal__text">{{ modalText }}</p>
         </div>
+
         <div v-if="isDelete" class="modal__btn-group">
           <button
             class="modal__btn-del button--primery"
@@ -136,39 +139,50 @@ export default {
         background-color: rgba(2,52,73,0.1);
         cursor: pointer;
 
-        span {
+        div {
           position: relative;
-          background-color: rgba(2,52,73,0.8);
-          transition: background-color .2s;
+          width: 100%;
+          height: 100%;
 
-          &::after {
-            content: '';
-            position: absolute;
-            right: -15px;
-            top: -1px;
-            width: 32px;
-            height: 3px;
-            background-color: inherit;
-            transform: rotate(45deg);
-          }
+          span {
+            display: block;
+            position: relative;
+            width: 0;
+            height: 0;
+            background-color: rgba(2,52,73,0.8);
+            transition: background-color .2s;
 
-          &::before {
-            content: '';
-            position: absolute;
-            right: -15px;
-            top: -1px;
-            width: 32px;
-            height: 3px;
-            background-color: inherit;
-            transform: rotate(-45deg);
+            &::after {
+              content: '';
+              position: absolute;
+              right: -28px;
+              top: 18px;
+              width: 32px;
+              height: 3px;
+              background-color: inherit;
+              transform: rotate(45deg);
+            }
+
+            &::before {
+              content: '';
+              position: absolute;
+              right: -29px;
+              top: 18px;
+              width: 32px;
+              height: 3px;
+              background-color: inherit;
+              transform: rotate(-45deg);
+            }
           }
         }
 
         &:hover,
         &:active,
         &:focus {
-          span {
-            background-color: #CC0000;
+          div {
+            span {
+              background-color: #CC0000;
+            }
           }
         }
       }

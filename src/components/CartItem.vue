@@ -2,39 +2,45 @@
   <li class="cart__item product">
     <div class="product__pic">
       <img
-        :src="item.product.image.file.url"
+        :src="item.img"
         width="120"
         height="120"
-        :alt="item.product.title"
+        :alt="item.productOffer.title"
       />
     </div>
     <h3 class="product__title">
-      {{ item.product.title }}
+      {{ item.productOffer.title }}
     </h3>
-    <p class="product__info product__info--color">
+
+    <p class="product__info product__info--color" v-if='item.isColor'>
       Цвет:
       <span>
-        <i :style="{ backgroundColor: item.product.colors[0].code }"></i>
-        {{ item.colorName }}
+        <i :style="{ backgroundColor: item.propValue[1] }"></i>
+        {{ item.propValue[0] }}
       </span>
     </p>
-    <span class="product__code"> Артикул: {{ item.product.id }} </span>
+
+    <p class="product__info" v-else>
+      {{ item.propTitle}} <span>{{ item.propValue }}</span>
+    </p>
+
+    <span class="product__code"> Артикул: {{ item.id }} </span>
 
     <product-counter
       class="product__counter"
       v-model:amount='amount'
     />
 
-    <b class="product__price"> {{ item.totalProductPrice }} ₽ </b>
+    <b class="product__price"> {{ numberFormat(item.totalProductPrice) }} ₽ </b>
 
     <button
       class="product__del button-del"
       type="button"
       aria-label="Удалить товар из корзины"
       @click.prevent="onDeleteProduct({
-        modalContent: `Вы действительно хотите удалить ${item.product.title}`,
+        modalContent: `Вы действительно хотите удалить ${item.productOffer.title}`,
         modalType: 'delete',
-        currentId: item.product.id
+        currentId: item.id
       })"
     >
       <svg width="20" height="20" fill="currentColor">
@@ -47,6 +53,7 @@
 <script>
 import { mapMutations } from 'vuex'
 import ProductCounter from './controls/ProductCounter.vue'
+import { numberFormat } from '@/helpers/formatHelpers'
 
 export default {
   name: 'CartItem',
@@ -66,14 +73,17 @@ export default {
       },
       set (value) {
         this.$store.dispatch('updateProductAmount', {
-          productId: this.item.product.id,
+          productId: this.item.id,
           amount: value
         })
       }
     }
   },
   methods: {
-    ...mapMutations({ onDeleteProduct: 'setMessage' })
+    ...mapMutations({ onDeleteProduct: 'setMessage' }),
+    numberFormat (value) {
+      return numberFormat(value)
+    }
   }
 }
 </script>
