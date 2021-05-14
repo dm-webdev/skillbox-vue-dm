@@ -17,44 +17,12 @@
           </p>
 
           <ul class="dictionary">
-            <li class="dictionary__item">
-              <span class="dictionary__key">
-                Получатель
+            <li class="dictionary__item" v-for="date, index in deliveryDate" :key="index">
+              <span class="dictionary__key" v-if="date.value">
+                {{ date.title}}
               </span>
               <span class="dictionary__value">
-                {{ order?.name}}
-              </span>
-            </li>
-            <li class="dictionary__item">
-              <span class="dictionary__key">
-                Адрес доставки
-              </span>
-              <span class="dictionary__value">
-                {{ order?.address}}
-              </span>
-            </li>
-            <li class="dictionary__item">
-              <span class="dictionary__key">
-                Телефон
-              </span>
-              <span class="dictionary__value">
-                {{ order?.phone}}
-              </span>
-            </li>
-            <li class="dictionary__item">
-              <span class="dictionary__key">
-                Email
-              </span>
-              <span class="dictionary__value">
-                {{ order?.email}}
-              </span>
-            </li>
-            <li class="dictionary__item" v-if="oder?.pay">
-              <span class="dictionary__key">
-                Способ оплаты
-              </span>
-              <span class="dictionary__value">
-                картой при получении
+                {{ date.value }}
               </span>
             </li>
           </ul>
@@ -65,15 +33,15 @@
             <order-aside-item
               v-for="item in order?.basket.items"
               :key="item.id"
-              :title="item.product.title"
+              :title="item.productOffer.title"
               :formatedPrice="numberFormat(item.price * item.quantity)"
               :code="item.id"
             />
           </ul>
 
           <div class="cart__total">
-            <p v-if="oder?.delivery">Доставка: <b>{{ totalPrice }} ₽</b></p>
-            <p>Итого: <b> {{ totalCount }} </b> шт. на сумму <b>{{ numberFormat(order?.totalPrice) }} ₽</b></p>
+            <p v-if="order?.deliveryType.id === 2">Доставка: <b>{{ numberFormat(+order?.deliveryType.price) }} ₽</b></p>
+            <p>Итого: <b> {{ totalCount }} </b> шт. на сумму <b>{{ numberFormat(+order?.totalPrice + +order?.deliveryType.price) }} ₽</b></p>
           </div>
         </div>
       </form>
@@ -90,13 +58,44 @@ import { numberFormat } from '@/helpers/formatHelpers'
 import BreadCrumbs from '../components/controls/BreadCrumbs.vue'
 
 export default {
-  components: { OrderAsideItem, BreadCrumbs },
+  components: {
+    OrderAsideItem,
+    BreadCrumbs
+  },
   name: 'OrderInfoPage',
   computed: {
     ...mapGetters({
       order: 'getCurrentOrderInfo',
       totalCount: 'getTotalCountOfOrder'
-    })
+    }),
+    deliveryDate () {
+      return [
+        {
+          title: 'Получатель',
+          value: this.order?.name
+        },
+        {
+          title: 'Адрес доставки',
+          value: this.order?.address
+        },
+        {
+          title: 'Телефон',
+          value: this.order?.phone
+        },
+        {
+          title: 'Email',
+          value: this.order?.email
+        },
+        {
+          title: 'Способ оплаты',
+          value: this.order?.paymentType
+        },
+        {
+          title: 'Комментарий',
+          value: this.order?.comment
+        }
+      ]
+    }
   },
   methods: {
     numberFormat (val) {

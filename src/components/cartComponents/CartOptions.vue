@@ -2,13 +2,13 @@
   <ul class="cart__options options">
     <li
       class="options__item"
-      v-for="option in optionsList"
+      v-for="option in currentOptionsList"
       :key="option.title"
     >
       <label class="options__label">
-        <input class="options__radio sr-only" type="radio" :value="option.value" v-model="currentSelectedOption">
+        <input class="options__radio sr-only" type="radio" :value="option.id" v-model="currentSelectedOption">
         <span class="options__value">
-          {{ option.title }} <b v-if="option.desk">{{ option.desk }}</b>
+          {{ option.title }} <b v-if="option.price">{{ option.desk }}</b>
         </span>
       </label>
     </li>
@@ -17,6 +17,8 @@
 </template>
 
 <script>
+import { numberFormat } from '@/helpers/formatHelpers'
+
 export default {
   name: 'CartOptions',
   props: {
@@ -33,9 +35,9 @@ export default {
   computed: {
     currentSelectedOption: {
       get () {
-        if (this.selectedOption === -1) {
-          this.$emit('update:selectedOption', this.optionsList[0].value)
-          return this.optionsList[0].value
+        if (this.selectedOption === -1 || !this.optionsList.find(item => item.id === this.selectedOption)) {
+          this.$emit('update:selectedOption', this.optionsList[0].id)
+          return this.optionsList[0].id
         } else {
           return this.selectedOption
         }
@@ -43,6 +45,20 @@ export default {
       set (value) {
         this.$emit('update:selectedOption', value)
       }
+    },
+    currentOptionsList () {
+      function priceToDesc (item) {
+        if (item?.price !== '0') {
+          return `${numberFormat(+item.price)} ₽`
+        }
+        return 'бесплатно'
+      }
+      return this.optionsList.map(item => {
+        return {
+          ...item,
+          desk: priceToDesc(item)
+        }
+      })
     }
   }
 }

@@ -60,14 +60,14 @@
 
             <cart-options
               :optionsList="deliveryOptions"
-              v-model:selectedOption="orderData.delivery"
+              v-model:selectedOption="orderData.deliveryTypeId"
             />
 
             <h3 class="cart__title">Оплата</h3>
 
             <cart-options
-              :optionsList="payOptions"
-              v-model:selectedOption="orderData.pay"
+              :optionsList="paymentsOptions"
+              v-model:selectedOption="orderData.paymentTypeId"
             />
           </div>
         </div>
@@ -77,8 +77,8 @@
             <order-aside-item
               v-for="item in products"
               :key="item.id"
-              :title="item.product.title"
-              :formatedPrice="item.totalProductPrice"
+              :title="item.productOffer.title"
+              :formatedPrice="numberFormat(item.totalProductPrice)"
               :code="item.id"
             />
           </ul>
@@ -88,7 +88,7 @@
               <b>{{ formatedTotalPrice }} ₽</b>
             </p>
             <p v-if="orderData.delivery > 0">Доставка: <b>{{ orderData.delivery }} ₽</b></p>
-            <p>Итого: <b>{{ totalCount }}</b> на сумму <b>{{ formatedPrice }} ₽</b></p>
+            <p>Итого: <b>{{ totalCount }}</b> на сумму <b>{{ numberFormat(formatedPrice) }} ₽</b></p>
           </div>
 
           <error-field
@@ -140,44 +140,28 @@ export default {
       totalCount: 'productInCartCount',
       totalPrice: 'cartTotalPrice'
     }),
-    deliveryOptions () {
-      return ([
-        {
-          title: 'Самовывоз',
-          desk: 'бесплатно',
-          value: 0
-        },
-        {
-          title: 'Курьером',
-          desk: '500 ₽',
-          value: 500
-        }
-      ])
-    },
-    payOptions () {
-      return ([
-        {
-          title: 'Картой при получении',
-          value: 'card'
-        },
-        {
-          title: 'Наличными при получении',
-          value: 'cash'
-        }
-      ])
-    },
     formatedTotalPrice () {
       return numberFormat(this.totalPrice)
     }
   },
+  methods: {
+    numberFormat (value) {
+      return numberFormat(value)
+    }
+  },
   setup () {
     const store = useStore()
-    const orderData = ref({ delivery: -1, pay: -1 })
+    const orderData = ref({ deliveryTypeId: -1, paymentTypeId: -1 })
     const errorData = ref({})
     const isFormValid = ref(false)
     const formSendWithError = ref()
-    const formatedPrice = ref(numberFormat(store.getters.cartTotalPrice))
+    const formatedPrice = ref(store.getters.cartTotalPrice)
     const router = useRouter()
+    const deliveryOptions = ref([])
+    const paymentsOptions = ref([])
+    const currentDeliveryOptions = ref(-1)
+
+    getdeliveryOptions()
 
     watch(orderData.value, () => {
       errorData.value.name = validateRequaredString(orderData.value.name, 3, 50)
@@ -190,7 +174,14 @@ export default {
       } else {
         isFormValid.value = false
       }
-      formatedPrice.value = numberFormat(store.getters.cartTotalPrice + orderData.value.delivery)
+      formatedPrice.value = store.getters.cartTotalPrice + +deliveryOptions.value.find(item => item.id === orderData.value.deliveryTypeId).price
+      currentDeliveryOptions.value = orderData.value.deliveryTypeId
+    })
+
+    watch(currentDeliveryOptions, () => {
+      if (orderData.value.deliveryTypeId !== -1) {
+        getPaymentsOptions(orderData.value.deliveryTypeId)
+      }
     })
 
     function postOrder () {
@@ -208,7 +199,7 @@ export default {
             modalContent: 'Ваша корзина успешно отправлена',
             modalType: 'success'
           })
-          orderData.value = { delivery: -1, pay: -1 }
+          orderData.value = { deliveryTypeId: -1, paymentTypeId: -1 }
           store.commit('updateCartProducts', [])
           formatedPrice.value = 0
           router.push({ name: 'orderInfo', params: { orderId: store.state.currentUser.currentOrderInfo.id } })
@@ -220,13 +211,45 @@ export default {
         .finally(() => store.commit('setIsLoading', false))
     }
 
+    function getdeliveryOptions () {
+      store.commit('setIsLoading', true)
+      axios.get('deliveries')
+        .then(response => {
+          deliveryOptions.value = response.data
+        })
+        .catch(() => store.commit('setMessage', {
+          modalContent: 'Что-то пошло не так, повторите запрос позднее',
+          modalType: 'error'
+        }))
+        .finally(() => store.commit('setIsLoading', false))
+    }
+
+    function getPaymentsOptions (id) {
+      store.commit('setIsLoading', true)
+      axios.get('payments', {
+        params: {
+          deliveryTypeId: id
+        }
+      })
+        .then(response => {
+          paymentsOptions.value = response.data
+        })
+        .catch(() => store.commit('setMessage', {
+          modalContent: 'Что-то пошло не так, повторите запрос позднее',
+          modalType: 'error'
+        }))
+        .finally(() => store.commit('setIsLoading', false))
+    }
+
     return {
       orderData,
       errorData,
       isFormValid,
       postOrder,
       formSendWithError,
-      formatedPrice
+      formatedPrice,
+      deliveryOptions,
+      paymentsOptions
     }
   }
 }

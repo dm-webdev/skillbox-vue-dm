@@ -7,6 +7,7 @@
       v-model="currentValue"
       @blur="() => setIsTouched()"
       v-maska="fieldMask"
+      autocomplete
     >
   </base-form-field>
 </template>
