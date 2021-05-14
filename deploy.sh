@@ -11,7 +11,7 @@ cd dist
 
 #инициализация репозитория и загрузка кода в GitHub
 git init
-git add -add
+git add --all
 git commit -m 'deploy'
 
 git push -f git@github.com:dm-webdev/vue-app.git master:gh-pages
