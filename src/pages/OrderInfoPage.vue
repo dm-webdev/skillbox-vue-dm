@@ -1,7 +1,7 @@
 <template>
     <main class="content container">
     <div class="content__top">
-      <bread-crumbs :name="'каталог/корзина/оформление заказа'" :slug="'catalog/cart'"/>
+      <bread-crumbs :name="'каталог/корзина/оформление заказа'" :slug="['catalog', 'cart']" />
 
       <h1 class="content__title">
         Заказ оформлен <span>№ {{ order?.id }}</span>

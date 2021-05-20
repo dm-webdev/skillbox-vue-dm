@@ -18,10 +18,10 @@
       <fieldset class='form__block'>
         <legend class='form__legend'>Категория</legend>
         <label class='form__label form__label--select'>
-          <select class='form__select' v-model.number='currentCategoryId'>
-            <option value='0'>Все категории</option>
+          <select class='form__select' v-model='currentCategoryId'>
+            <option value=''>Все категории</option>
             <option
-              :value='category.id'
+              :value='category.slug'
               v-for='category in categories'
               :key='category.id'
             >
@@ -65,7 +65,7 @@ export default {
   props: {
     priceFrom: Number,
     priceTo: Number,
-    categoryId: Number,
+    categoryId: String,
     selectedProps: Object
   },
   computed: {
@@ -77,7 +77,7 @@ export default {
     const store = useStore()
     const currentPriceFrom = ref(0)
     const currentPriceTo = ref(0)
-    const currentCategoryId = ref(0)
+    const currentCategoryId = ref('')
     const currentSelectedProps = ref({})
     const isCleanBtnHide = ref(false)
 
@@ -96,7 +96,7 @@ export default {
     function cleanFilter () {
       currentPriceFrom.value = 0
       currentPriceTo.value = 0
-      currentCategoryId.value = 0
+      currentCategoryId.value = ''
       currentSelectedProps.value = {}
       isCleanBtnHide.value = false
       submitFilter()

@@ -12,7 +12,7 @@ export const routes = [
   },
   {
     name: 'catalog',
-    path: '/catalog',
+    path: '/catalog/:categoriesId?',
     component: MainPage,
     meta: { title: 'ТЕХНОЗАВР | каталог' }
   },

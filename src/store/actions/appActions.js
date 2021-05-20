@@ -8,10 +8,10 @@ export default {
   },
 
   showLoader (context) {
-    context.commit('isLoading', true)
+    context.commit('setIsLoading', true)
   },
 
   hideLoader (context) {
-    context.commit('isLoading', true)
+    context.commit('setIsLoading', false)
   }
 }

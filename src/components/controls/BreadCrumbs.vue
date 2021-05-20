@@ -3,7 +3,10 @@
     <li class="breadcrumbs__item" v-for='(name, index) in names.nameList' :key='name'>
       <router-link
         class="breadcrumbs__link"
-        :to="{ name: slugs.slugsList[index] }"
+        :to="{
+          name: slugs.slugsList[index],
+          params: params.paramsList[index]
+        }"
       >
         {{ name }}
       </router-link>
@@ -27,7 +30,11 @@ export default {
       requared: true
     },
     slug: {
-      type: String,
+      type: Array,
+      requared: false
+    },
+    param: {
+      type: Array,
       requared: false
     }
   },
@@ -40,9 +47,14 @@ export default {
       return { nameList, currentName }
     },
     slugs () {
-      const slugsList = (this.slug) ? this.slug.split('/') : 'catalog/catalog/catalog'.split('/')
+      const slugsList = (this.slug) ? this.slug : 'catalog/catalog/catalog'.split('/')
 
       return { slugsList }
+    },
+    params () {
+      const paramsList = (this.param) ? this.param : [{}, {}, {}]
+
+      return { paramsList }
     }
   }
 }

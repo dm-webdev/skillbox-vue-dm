@@ -1,7 +1,11 @@
 <template>
   <main class="content container" v-if='product'>
     <div class="content__top">
-      <bread-crumbs :name='breadcrumbsName' />
+      <bread-crumbs
+        :name='breadcrumbsName'
+        :slug="['catalog',  'catalog']"
+        :param="[{}, breadcrumbsParam]"
+      />
     </div>
 
     <section class="item">
@@ -110,6 +114,7 @@ export default {
     const selectedProp = ref('-1')
     const selectedOffer = ref(null)
     const breadcrumbsName = ref('каталог/')
+    const breadcrumbsParam = ref({})
 
     store.dispatch('getCurrentProduct', curentId.value)
 
@@ -133,6 +138,7 @@ export default {
         propsList.value = getPropsList(product.value.offers.map(item => item.propValues[0]))
         currentMainImg.value = product.value.preview.file.url
         breadcrumbsName.value = `каталог/ ${product.value.category.title}/ ${product.value.title}`
+        breadcrumbsParam.value = { categoriesId: product.value.category.slug }
       }
     })
 
@@ -162,6 +168,7 @@ export default {
       productAmount,
       selectedColor,
       breadcrumbsName,
+      breadcrumbsParam,
       addToCart: () => {
         store.dispatch('addToCart', {
           productOfferId: selectedOffer.value.id,

@@ -40,6 +40,7 @@ import ProductFilter from '@/components/ProductFilter.vue'
 import EmptyRequest from '@/components/misc/EmptyRequest.vue'
 import { ref, watch, computed } from 'vue'
 import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
 
 export default {
   name: 'MainPage',
@@ -51,22 +52,38 @@ export default {
   },
   setup () {
     const store = useStore()
+    const route = useRoute()
 
+    const categoriesId = ref(route.params.categoriesId)
     const filterPriceFrom = ref(0)
     const filterPriceTo = ref(0)
-    const filterCategoryId = ref(0)
+    const filterCategoryId = ref('')
     const filterProps = ref(null)
     const currentPage = ref(1)
     const productsPerPage = ref(12)
 
-    if (!store.getters.getCatalog) {
+    if (!store.getters.getCatalog || categoriesId.value) {
+      console.log('start')
       store.dispatch('getProducts', {
         page: currentPage.value,
-        limit: productsPerPage.value
+        limit: productsPerPage.value,
+        categoryId: categoriesId.value
       })
     }
 
+    watch(
+      () => route.params.categoriesId,
+      async newParams => {
+        store.dispatch('getProducts', {
+          page: currentPage.value,
+          limit: productsPerPage.value,
+          categoryId: newParams
+        })
+      }
+    )
+
     watch([currentPage, filterCategoryId, filterProps, filterPriceFrom, filterPriceTo], () => {
+      console.log('all')
       store.dispatch('getProducts', {
         page: currentPage.value,
         limit: productsPerPage.value,
@@ -78,6 +95,7 @@ export default {
     })
 
     return {
+      categoriesId,
       filterPriceFrom,
       filterPriceTo,
       filterCategoryId,
