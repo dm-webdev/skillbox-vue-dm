@@ -84,11 +84,11 @@
           </ul>
 
           <div class="cart__total">
-            <p v-if="!!formatedTotalPrice">Tовар на сумму
-              <b>{{ formatedTotalPrice }} ₽</b>
+            <p v-if="!!numberFormat(totalProuctsPrice)">Tовар на сумму
+              <b>{{ numberFormat(totalProuctsPrice) }} ₽</b>
             </p>
             <p v-if="orderData.delivery > 0">Доставка: <b>{{ orderData.delivery }} ₽</b></p>
-            <p>Итого: <b>{{ totalCount }}</b> на сумму <b>{{ numberFormat(formatedPrice) }} ₽</b></p>
+            <p>Итого: <b>{{ totalCount }}</b> на сумму <b>{{ numberFormat(totalPrice) }} ₽</b></p>
           </div>
 
           <error-field
@@ -128,7 +128,6 @@ import BaseFormText from '../components/cartComponents/BaseFormText.vue'
 import BaseFormTextarea from '../components/cartComponents/BaseFormTextarea.vue'
 import OrderAsideItem from '@/components/cartComponents/OrderAsideItem.vue'
 import CartOptions from '../components/cartComponents/CartOptions.vue'
-import axios from '@/helpers/axiosConfig'
 import { useRouter } from 'vue-router'
 
 export default {
@@ -138,11 +137,8 @@ export default {
     ...mapGetters({
       products: 'cartDetailProducts',
       totalCount: 'productInCartCount',
-      totalPrice: 'cartTotalPrice'
-    }),
-    formatedTotalPrice () {
-      return numberFormat(this.totalPrice)
-    }
+      totalProuctsPrice: 'cartTotalPrice'
+    })
   },
   methods: {
     numberFormat (value) {
@@ -155,13 +151,15 @@ export default {
     const errorData = ref({})
     const isFormValid = ref(false)
     const formSendWithError = ref()
-    const formatedPrice = ref(store.getters.cartTotalPrice)
+    const totalPrice = ref(store.getters.cartTotalPrice)
     const router = useRouter()
     const deliveryOptions = ref([])
     const paymentsOptions = ref([])
     const currentDeliveryOptions = ref(-1)
 
-    getdeliveryOptions()
+    store.dispatch('getDeliveryOptions').then(response => {
+      deliveryOptions.value = response.data
+    })
 
     watch(orderData.value, () => {
       errorData.value.name = validateRequaredString(orderData.value.name, 3, 50)
@@ -174,71 +172,35 @@ export default {
       } else {
         isFormValid.value = false
       }
-      formatedPrice.value = store.getters.cartTotalPrice + +deliveryOptions.value.find(item => item.id === orderData.value.deliveryTypeId).price
+      totalPrice.value = store.getters.cartTotalPrice + +deliveryOptions.value.find(
+        item => item.id === orderData.value.deliveryTypeId
+      ).price
       currentDeliveryOptions.value = orderData.value.deliveryTypeId
     })
 
     watch(currentDeliveryOptions, () => {
       if (orderData.value.deliveryTypeId !== -1) {
-        getPaymentsOptions(orderData.value.deliveryTypeId)
+        store.dispatch('getPaymentsOptions', orderData.value.deliveryTypeId)
+          .then(response => {
+            paymentsOptions.value = response.data
+          })
       }
     })
 
     function postOrder () {
-      store.commit('setIsLoading', true)
-      axios.post('orders', {
-        ...orderData.value
-      }, {
-        params: {
-          userAccessKey: store.state.currentUser.accessKey
-        }
-      })
-        .then(response => {
-          store.commit('setOrderInfo', response.data)
-          store.commit('setMessage', {
-            modalContent: 'Ваша корзина успешно отправлена',
-            modalType: 'success'
-          })
+      store.dispatch('postOrder', orderData.value)
+        .then(() => {
           orderData.value = { deliveryTypeId: -1, paymentTypeId: -1 }
           store.commit('updateCartProducts', [])
-          formatedPrice.value = 0
-          router.push({ name: 'orderInfo', params: { orderId: store.state.currentUser.currentOrderInfo.id } })
+          totalPrice.value = 0
+          router.push({
+            name: 'orderInfo',
+            params: { orderId: store.state.currentUser.currentOrderInfo.id }
+          })
         })
         .catch(er => {
-          console.log(er.response.data)
           formSendWithError.value = er.response.data.error.message
         })
-        .finally(() => store.commit('setIsLoading', false))
-    }
-
-    function getdeliveryOptions () {
-      store.commit('setIsLoading', true)
-      axios.get('deliveries')
-        .then(response => {
-          deliveryOptions.value = response.data
-        })
-        .catch(() => store.commit('setMessage', {
-          modalContent: 'Что-то пошло не так, повторите запрос позднее',
-          modalType: 'error'
-        }))
-        .finally(() => store.commit('setIsLoading', false))
-    }
-
-    function getPaymentsOptions (id) {
-      store.commit('setIsLoading', true)
-      axios.get('payments', {
-        params: {
-          deliveryTypeId: id
-        }
-      })
-        .then(response => {
-          paymentsOptions.value = response.data
-        })
-        .catch(() => store.commit('setMessage', {
-          modalContent: 'Что-то пошло не так, повторите запрос позднее',
-          modalType: 'error'
-        }))
-        .finally(() => store.commit('setIsLoading', false))
     }
 
     return {
@@ -247,7 +209,7 @@ export default {
       isFormValid,
       postOrder,
       formSendWithError,
-      formatedPrice,
+      totalPrice,
       deliveryOptions,
       paymentsOptions
     }

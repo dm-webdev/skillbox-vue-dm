@@ -18,12 +18,8 @@ export default {
     }
   },
   setup () {
-    const currentImg = computed(() => {
-      return emptyImg
-    })
-
     return {
-      currentImg
+      currentImg: computed(() => emptyImg)
     }
   }
 }

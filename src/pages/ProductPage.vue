@@ -1,5 +1,5 @@
 <template>
-  <main class="content container" v-if="product">
+  <main class="content container" v-if='product'>
     <div class="content__top">
       <bread-crumbs :name='breadcrumbsName' />
     </div>
@@ -7,12 +7,11 @@
     <section class="item">
       <div class="item__pics pics">
         <div class="pics__wrapper">
-          <img width="570" height="570" :src='currentMainImg' :alt='currentTitle'>
+          <img v-if="currentMainImg" width="570" height="570" :src='currentMainImg' :alt='selectedOffer?.title'>
         </div>
       </div>
-
       <div class="item__info">
-        <span class="item__code">Артикул: {{ product.id }}</span>
+        <span class="item__code">Артикул: {{ product?.id }}</span>
         <h2 class="item__title">
           {{ selectedOffer?.title }}
         </h2>
@@ -30,7 +29,7 @@
                 input-type='radio'
               />
             </fieldset>
-            <div v-if='propsList.length > 0'>
+            <div v-if='propsList?.length > 0'>
               <fieldset
                 class="form__block"
                 v-for='prop, index in propsList' :key='index'
@@ -53,6 +52,7 @@
                 v-model:amount='productAmount'
               />
               <button
+                v-if='!!product?.id'
                 class="button button--primery"
                 type="submit"
                 :disabled='$store.state.apiConnection.isLoading'
@@ -71,8 +71,7 @@
 </template>
 
 <script>
-import axios from '@/helpers/axiosConfig'
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { numberFormat, getColors, getPropsList, normalizeString } from '@/helpers/formatHelpers'
@@ -80,7 +79,7 @@ import ColorsControl from '@/components/controls/ColorsControl.vue'
 import BreadCrumbs from '@/components/controls/BreadCrumbs.vue'
 import ProductCounter from '../components/controls/ProductCounter.vue'
 import AccordionProduct from '../components/misc/AccordionProduct.vue'
-import ProductPropsControl from '../components/controls/productPropsControl.vue'
+import ProductPropsControl from '@/components/controls/ProductPropsControl.vue'
 
 export default {
   name: 'ProductPage',
@@ -91,75 +90,55 @@ export default {
     AccordionProduct,
     ProductPropsControl
   },
-  props: {
-    pageParams: {
-      type: Object,
-      requared: true
-    }
-  },
-  computed: {
-    product () {
-      return this.currentProduct
-    },
-    breadcrumbsName () {
-      return `каталог/ ${this.product.category.title}/ ${this.product.title}`
-    }
-  },
   methods: {
     numberFormat (val) {
       return numberFormat(val)
     }
   },
-  setup (props) {
+  setup () {
     const store = useStore()
     const route = useRoute()
 
     const curentId = ref(route.params.id)
-    const productAmount = ref(1)
-    const selectedColor = ref('-1')
-    const currentProduct = ref(null)
+    const product = computed(() => store.getters.getCurrentProduct)
+    const colors = ref(null)
     const offersList = ref(null)
     const propsList = ref(null)
-    const colors = ref(getColors(currentProduct.value))
-    const currentMainImg = ref(currentProduct.value?.preview.file.url || null)
+    const productAmount = ref(1)
+    const selectedColor = ref('-1')
+    const currentMainImg = ref(null)
     const selectedProp = ref('-1')
     const selectedOffer = ref(null)
+    const breadcrumbsName = ref('каталог/')
 
-    function getCurrentProduct () {
-      store.commit('setIsLoading', true)
-      axios.get(`products/${curentId.value}`)
-        .then(response => {
-          const data = response.data
-          currentProduct.value = data
-          colors.value = getColors(data)
-          currentMainImg.value = data.preview.file.url
-          offersList.value = data.offers
-          propsList.value = getPropsList(data.offers.map(item => item.propValues[0]))
-        })
-        .catch((err) => {
-          store.commit('setMessage', {
-            modalContent: `${err.response.data.error.message}`,
-            modalType: 'error'
-          })
-        })
-        .finally(() => store.commit('setIsLoading', false))
-    }
-
-    getCurrentProduct()
+    store.dispatch('getCurrentProduct', curentId.value)
 
     watch(
       () => route.params,
       async newParams => {
+        if (!newParams.id) {
+          store.dispatch('cleanCurrentProduct')
+        }
         curentId.value = newParams.id
         if (curentId.value) {
-          getCurrentProduct()
+          store.dispatch('getCurrentProduct', curentId.value)
         }
       }
     )
 
+    watch(() => product.value.id, () => {
+      if (product.value && product.value.id !== -1) {
+        colors.value = getColors(product.value)
+        offersList.value = product.value.offers
+        propsList.value = getPropsList(product.value.offers.map(item => item.propValues[0]))
+        currentMainImg.value = product.value.preview.file.url
+        breadcrumbsName.value = `каталог/ ${product.value.category.title}/ ${product.value.title}`
+      }
+    })
+
     watch([selectedColor, selectedProp], () => {
-      if (selectedColor.value !== '-1' && currentProduct.value.mainProp.code !== 'color') {
-        const imagesData = currentProduct.value.colors.find(
+      if (selectedColor.value !== '-1' && product.value.mainProp.code !== 'color') {
+        const imagesData = product.value.colors.find(
           item => item.color.title === selectedColor.value
         )
         if (imagesData.galery) {
@@ -179,9 +158,10 @@ export default {
       propsList,
       colors,
       currentMainImg,
-      currentProduct,
+      product,
       productAmount,
       selectedColor,
+      breadcrumbsName,
       addToCart: () => {
         store.dispatch('addToCart', {
           productOfferId: selectedOffer.value.id,

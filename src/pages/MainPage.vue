@@ -2,7 +2,7 @@
     <main class='content container'>
     <div class='content__top content__top--catalog'>
       <h1 class='content__title'>Каталог</h1>
-      <span class='content__info'>{{ totalProductsCount }} товаров</span>
+      <span class='content__info'>{{ totalProductsCount?.total }} товаров</span>
     </div>
 
     <div class='content__catalog'>
@@ -38,8 +38,7 @@ import ProductList from '@/components/ProductList.vue'
 import BasePagination from '@/components/controls/BasePagination.vue'
 import ProductFilter from '@/components/ProductFilter.vue'
 import EmptyRequest from '@/components/misc/EmptyRequest.vue'
-import axios from '@/helpers/axiosConfig'
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { useStore } from 'vuex'
 
 export default {
@@ -50,19 +49,6 @@ export default {
     ProductFilter,
     EmptyRequest
   },
-  computed: {
-    products () {
-      return this.productsData ? this.productsData.items : null
-    },
-    totalProductsCount () {
-      return this.productsData ? this.productsData.pagination.total : 0
-    }
-  },
-  methods: {
-    goToFirstPage () {
-      this.currentPage = 1
-    }
-  },
   setup () {
     const store = useStore()
 
@@ -70,36 +56,25 @@ export default {
     const filterPriceTo = ref(0)
     const filterCategoryId = ref(0)
     const filterProps = ref(null)
-    const productsData = ref(null)
     const currentPage = ref(1)
     const productsPerPage = ref(12)
 
-    function loadProducts () {
-      store.commit('setIsLoading', true)
-      axios.get('products/', {
-        params: {
-          page: currentPage.value,
-          limit: productsPerPage.value,
-          categoryId: filterCategoryId.value,
-          // props: filterProps.value,
-          minPrice: filterPriceFrom.value || null,
-          maxPrice: filterPriceTo.value || null
-        }
+    if (!store.getters.getCatalog) {
+      store.dispatch('getProducts', {
+        page: currentPage.value,
+        limit: productsPerPage.value
       })
-        .then(response => {
-          productsData.value = response.data
-        })
-        .catch(() => store.commit('setMessage', {
-          modalContent: 'Что-то пошло не так, повторите запрос позднее',
-          modalType: 'error'
-        }))
-        .finally(() => store.commit('setIsLoading', false))
     }
 
-    loadProducts()
-
     watch([currentPage, filterCategoryId, filterProps, filterPriceFrom, filterPriceTo], () => {
-      loadProducts()
+      store.dispatch('getProducts', {
+        page: currentPage.value,
+        limit: productsPerPage.value,
+        categoryId: filterCategoryId.value,
+        // props: filterProps.value,
+        minPrice: filterPriceFrom.value || null,
+        maxPrice: filterPriceTo.value || null
+      })
     })
 
     return {
@@ -107,9 +82,10 @@ export default {
       filterPriceTo,
       filterCategoryId,
       filterProps,
-      productsData,
       currentPage,
-      productsPerPage
+      productsPerPage,
+      products: computed(() => store.getters.getCatalog),
+      totalProductsCount: computed(() => store.getters.getPagination)
     }
   }
 }

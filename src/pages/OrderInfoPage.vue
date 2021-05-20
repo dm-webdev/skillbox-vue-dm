@@ -40,8 +40,13 @@
           </ul>
 
           <div class="cart__total">
-            <p v-if="order?.deliveryType.id === 2">Доставка: <b>{{ numberFormat(+order?.deliveryType.price) }} ₽</b></p>
-            <p>Итого: <b> {{ totalCount }} </b> шт. на сумму <b>{{ numberFormat(+order?.totalPrice + +order?.deliveryType.price) }} ₽</b></p>
+            <p v-if="order?.deliveryType.id === 2">Доставка: &nbsp;
+              <b>{{ numberFormat(+order?.deliveryType.price) }} ₽</b>
+            </p>
+
+            <p>Итого: <b> {{ totalCount }} </b> шт. на сумму &nbsp;
+              <b>{{ numberFormat(+order?.totalPrice + +order?.deliveryType.price) }} ₽</b>
+            </p>
           </div>
         </div>
       </form>

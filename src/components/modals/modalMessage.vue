@@ -8,6 +8,7 @@
     >
       <div class="modal-container__flex">
         <button
+          v-if="modalData.showCloseBtn"
           @click="() => {navigate(), cleanModal()}"
           @keypress.enter="() => {navigate(), cleanModal()}"
           role="link"
@@ -55,47 +56,38 @@
 </template>
 
 <script>
-// import { computed } from 'vue'
 import { getCurrentImg, getIsSuccess, getIsDelete, getToPath, closeModalWithTimeOut } from '@/helpers/modalHelpers'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
-import { ref, watch } from 'vue'
+import { computed, watch } from 'vue'
 
 export default {
   name: 'ModalMessage',
   setup () {
     const store = useStore()
     const route = useRoute()
-    const modalType = ref(store.state.apiConnection.modalType)
-    const modalText = ref(store.state.apiConnection.modalContent)
-    const currentId = ref(store.state.apiConnection.currentId)
-    const currentImg = ref(getCurrentImg(modalType.value))
-    const isSuccess = ref(getIsSuccess(modalType.value))
-    const isDelete = ref(getIsDelete(modalType.value))
-    const toPath = ref(getToPath(modalType.value, route))
-    const cleanModal = () => store.commit('cleanMessage')
-    const onDeleteProduct = () => store.dispatch('deleteProductFromCart', { productId: currentId.value })
 
-    closeModalWithTimeOut(isSuccess.value, cleanModal)
+    const modalData = computed(() => store.getters.getModalData)
+    const currentId = computed(() => store.getters.getIdToDel)
+    const cleanModal = () => store.dispatch('cleanMessage')
+    const onDeleteProduct = () => {
+      store.dispatch('deleteProductFromCart', { productId: currentId.value })
+      store.dispatch('cleanMessage')
+    }
 
-    watch(store.state.apiConnection, () => {
-      modalText.value = store.state.apiConnection.modalContent
-      modalType.value = store.state.apiConnection.modalType
-      currentImg.value = getCurrentImg(modalType.value)
-      isSuccess.value = getIsSuccess(modalType.value)
-      isDelete.value = getIsDelete(modalType.value)
-      toPath.value = getToPath(modalType.value, route)
-      closeModalWithTimeOut(isSuccess.value, cleanModal)
-    })
+    watch(store.state.apiConnection, () =>
+      closeModalWithTimeOut(getIsSuccess(modalData.value.modalType), cleanModal)
+    )
 
     return {
-      currentImg,
-      modalText,
-      isSuccess,
-      cleanModal,
-      isDelete,
-      toPath,
-      onDeleteProduct
+      currentImg: getCurrentImg(modalData.value.modalType),
+      modalText: modalData.value.modalContent,
+      isSuccess: getIsSuccess(modalData.value.modalType),
+      isDelete: getIsDelete(modalData.value.modalType),
+      toPath: getToPath(modalData.value.modalType, route),
+      modalData,
+      onDeleteProduct,
+      cleanModal
     }
   }
 }

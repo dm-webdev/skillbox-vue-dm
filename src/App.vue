@@ -2,8 +2,11 @@
   <app-header />
 
   <router-view />
+
   <loader v-if='$store.state.apiConnection.isLoading' />
+
   <modal-message v-if='!!$store.state.apiConnection.modalContent' />
+
   <app-footer />
 </template>
 

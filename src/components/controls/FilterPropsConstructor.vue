@@ -27,7 +27,7 @@ import { ref, watch } from 'vue'
 import axios from '@/helpers/axiosConfig'
 import { useStore } from 'vuex'
 import ColorsControl from '@/components/controls/ColorsControl.vue'
-import ProductPropsControl from './productPropsControl.vue'
+import ProductPropsControl from '@/components/controls/ProductPropsControl.vue'
 import { normalizeString } from '@/helpers/formatHelpers'
 
 export default {
@@ -54,7 +54,7 @@ export default {
         ?.availableValues.filter(item => item.productsCount !== 0) || null
 
       if (colors.value) {
-        store.commit('setIsLoading', true)
+        store.dispatch('showLoader')
         axios.get('colors/')
           .then(response => {
             colorsBase.value = response.data.items.filter(
@@ -62,11 +62,11 @@ export default {
                 availableColor => normalizeString(availableColor.value) === normalizeString(item.title)
               ))
           })
-          .catch(() => store.commit('setMessage', {
+          .catch(() => store.dispatch('modalOpen', {
             modalContent: 'Что-то пошло не так, повторите запрос позднее',
             modalType: 'error'
           }))
-          .finally(() => store.commit('setIsLoading', false))
+          .finally(() => store.dispatch('hideLoader'))
       }
     })
 
@@ -74,8 +74,9 @@ export default {
       const propsList = {}
       currentSelectedProps.value.forEach(selectedProp => {
         const key = currentPropsData.value?.find(
-          item => item.availableValues.map(item => normalizeString(item.value)).includes(normalizeString(selectedProp))
-        )?.code
+          item => item.availableValues.map(
+            item => normalizeString(item.value)).includes(normalizeString(selectedProp)
+          ))?.code
 
         if (key in propsList) {
           propsList[key].push(selectedProp)

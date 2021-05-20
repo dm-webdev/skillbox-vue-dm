@@ -23,7 +23,7 @@
 <script>
 
 export default {
-  name: 'productPropsControl',
+  name: 'ProductPropsControl',
   props: {
     propsPalette: {
       type: Object,

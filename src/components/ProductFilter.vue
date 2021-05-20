@@ -54,7 +54,8 @@
 <script>
 import axios from '@/helpers/axiosConfig'
 import FilterPropsConstructor from './controls/FilterPropsConstructor.vue'
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
+import { useStore } from 'vuex'
 
 export default {
   name: 'ProductFilter',
@@ -73,11 +74,16 @@ export default {
     }
   },
   setup (props, context) {
+    const store = useStore()
     const currentPriceFrom = ref(0)
     const currentPriceTo = ref(0)
     const currentCategoryId = ref(0)
     const currentSelectedProps = ref({})
     const isCleanBtnHide = ref(false)
+
+    if (!store.getters.getCategories) {
+      store.dispatch('getCategories')
+    }
 
     watch([currentPriceFrom, currentPriceTo, currentCategoryId], (values) => {
       if (values.some(item => item > 0 && item !== '')) {
@@ -110,12 +116,12 @@ export default {
       currentSelectedProps,
       isCleanBtnHide,
       cleanFilter,
-      submitFilter
+      submitFilter,
+      categoriesData: computed(() => store.getters.getCategories)
     }
   },
   data () {
     return {
-      categoriesData: null,
       currentCategoryProps: null
     }
   },
@@ -138,33 +144,16 @@ export default {
     }
   },
   methods: {
-    getCategories () {
-      this.$store.commit('setIsLoading', true)
-      axios.get('productCategories/')
-        .then(response => {
-          this.categoriesData = response.data
-        })
-        .catch(() => this.$store.commit('setMessage', {
-          modalContent: 'Что-то пошло не так, повторите запрос позднее',
-          modalType: 'error'
-        }))
-        .finally(() => this.$store.commit('setIsLoading', false))
-    },
     getCategorieProps (id) {
-      this.$store.commit('setIsLoading', true)
       axios.get(`productCategories/${id}`)
         .then(response => {
           this.currentCategoryProps = response.data
         })
-        .catch(() => this.$store.commit('setMessage', {
+        .catch(() => this.$store.dispatch('modalOpen', {
           modalContent: 'Что-то пошло не так, повторите запрос позднее',
           modalType: 'error'
         }))
-        .finally(() => this.$store.commit('setIsLoading', false))
     }
-  },
-  created () {
-    this.getCategories()
   }
 }
 </script>

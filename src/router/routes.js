@@ -14,36 +14,36 @@ export const routes = [
     name: 'catalog',
     path: '/catalog',
     component: MainPage,
-    meta: { title: 'каталог' }
+    meta: { title: 'ТЕХНОЗАВР | каталог' }
   },
   {
     name: 'product',
     path: '/product/:id',
     component: ProductPage,
-    meta: { title: 'продукт' }
+    meta: { title: 'ТЕХНОЗАВР | продукт' }
   },
   {
     name: 'cart',
     path: '/cart',
     component: CartPage,
-    meta: { title: 'корзина' }
+    meta: { title: 'ТЕХНОЗАВР | корзина' }
   },
   {
     name: 'order',
     path: '/order',
     component: OrderPage,
-    meta: { title: 'оформление заказа' }
+    meta: { title: 'ТЕХНОЗАВР | оформление' }
   },
   {
     name: 'orderInfo',
     path: '/order/info/:orderId',
     component: OrderInfoPage,
-    meta: { title: 'заказ' }
+    meta: { title: 'ТЕХНОЗАВР | заказ' }
   },
   {
     name: 'notFound',
     path: '/:pathMatch(.*)*',
     component: NotFoundPage,
-    meta: { title: 'не найдена' }
+    meta: { title: 'ТЕХНОЗАВР | не найдена' }
   }
 ]

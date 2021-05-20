@@ -37,7 +37,7 @@
 import ColorsControl from '@/components/controls/ColorsControl.vue'
 import { numberFormat, normalizeString } from '@/helpers/formatHelpers'
 import { ref, watch } from 'vue'
-import ProductPropsControl from './controls/productPropsControl.vue'
+import ProductPropsControl from '@/components/controls/ProductPropsControl.vue'
 
 export default {
   name: 'ProductCard',

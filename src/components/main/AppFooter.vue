@@ -9,7 +9,7 @@
         </li>
         <li>
           <a class="footer__link" href="tel:88006009009">
-            8 800 600 90 09
+            8 XXX XXX XX XX
           </a>
         </li>
         <li>
@@ -18,12 +18,12 @@
           </a>
         </li>
         <li>
-          <a class="footer__link" href="#">
+          <a class="footer__link" href="https://www.dm-webdev.ru/">
             Распродажа
           </a>
         </li>
         <li>
-          <a class="footer__link footer__link--medium" href="#">
+          <a class="footer__link footer__link--medium" href="https://www.dm-webdev.ru/#feedbackAnchor">
             Заказать звонок
           </a>
         </li>
@@ -31,35 +31,35 @@
 
       <ul class="footer__social social">
         <li class="social__item">
-          <a class="social__link" href="#" aria-label="Вконтакте">
+          <a class="social__link" href="https://www.dm-webdev.ru/#feedbackAnchor" aria-label="Вконтакте">
             <svg width="20" height="11" fill="currentColor">
               <use xlink:href="#icon-vk"></use>
             </svg>
           </a>
         </li>
         <li class="social__item">
-          <a class="social__link" href="#" aria-label="Инстаграм">
+          <a class="social__link" href="https://www.dm-webdev.ru/#feedbackAnchor" aria-label="Инстаграм">
             <svg width="17" height="17" fill="currentColor">
               <use xlink:href="#icon-insta"></use>
             </svg>
           </a>
         </li>
         <li class="social__item">
-          <a class="social__link" href="#" aria-label="Facebook">
+          <a class="social__link" href="https://www.dm-webdev.ru/#feedbackAnchor" aria-label="Facebook">
             <svg width="17" height="17" fill="currentColor">
               <use xlink:href="#icon-facebook"></use>
             </svg>
           </a>
         </li>
         <li class="social__item">
-          <a class="social__link" href="#" aria-label="Twitter">
+          <a class="social__link" href="https://www.dm-webdev.ru/#feedbackAnchor" aria-label="Twitter">
             <svg width="17" height="14" fill="currentColor">
               <use xlink:href="#icon-twitter"></use>
             </svg>
           </a>
         </li>
         <li class="social__item">
-          <a class="social__link" href="#" aria-label="Telegram">
+          <a class="social__link" href="https://www.dm-webdev.ru/#feedbackAnchor" aria-label="Telegram">
             <svg width="19" height="17" fill="currentColor">
               <use xlink:href="#icon-telegram"></use>
             </svg>
@@ -74,12 +74,12 @@
 
       <ul class="footer__data">
         <li>
-          <a class="footer__link" href="#" target="_blank" rel="noopener" type="application/pdf">
+          <a class="footer__link" href="https://www.dm-webdev.ru/" target="_blank" rel="noopener" type="application/pdf">
             Политика конфиденциальности
           </a>
         </li>
         <li>
-          <a class="footer__link" href="#" target="_blank" rel="noopener" type="application/pdf">
+          <a class="footer__link" href="https://www.dm-webdev.ru/" target="_blank" rel="noopener" type="application/pdf">
             Публичная оферта
           </a>
         </li>

@@ -4,30 +4,24 @@ import defaultImg from '@/assets/img/egg.svg'
 import deleteImg from '@/assets/img/trash.svg'
 
 export function getCurrentImg (modalType) {
-  if (modalType === 'success') {
-    return successImg
+  switch (modalType) {
+    case 'success':
+      return successImg
+    case 'error':
+      return errorImg
+    case 'delete':
+      return deleteImg
+    default:
+      return defaultImg
   }
-  if (modalType === 'error') {
-    return errorImg
-  }
-  if (modalType === 'delete') {
-    return deleteImg
-  }
-  return defaultImg
 }
 
 export function getIsSuccess (modalType) {
-  if (modalType === 'success') {
-    return true
-  }
-  return false
+  return modalType === 'success'
 }
 
 export function getIsDelete (modalType) {
-  if (modalType === 'delete') {
-    return true
-  }
-  return false
+  return modalType === 'delete'
 }
 
 export function getToPath (modalType, route) {
