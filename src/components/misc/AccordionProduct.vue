@@ -18,6 +18,14 @@
       <p v-if="typeof currentContent.content === 'string'">{{ currentContent.content }}</p>
 
       <ul v-else-if="typeof currentContent.content === 'object'">
+        <li>
+          <p>
+            Данное приложение разработано в качестве дипломного проекта курса «JavaScript-фреймворк Vue.js»
+            онлайн университета SKILLBOX. Программа написана языком JavaScript c использованием Vue.js, Vue-router,
+            Vuex. Все материалы, представленные на сайте носят ознакомительный характер и не являются публичной афертой.
+          </p>
+        </li>
+
         <li v-for='property, index in currentContent.content' :key='index'>
           <h3>{{ property.title }}</h3>
           <p>{{ property.value }}</p>

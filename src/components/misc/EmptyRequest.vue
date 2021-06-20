@@ -2,6 +2,11 @@
   <div class="empty__container" >
     <div class="empty__img" :style="{ backgroundImage: `url(${currentImg})` }"/>
     <p class="empty__desc">{{ text }}</p>
+    <p class="empty__desc">
+      Данное приложение разработано в качестве дипломного проекта курса «JavaScript-фреймворк Vue.js»
+      онлайн университета SKILLBOX. Программа написана языком JavaScript c использованием Vue.js, Vue-router,
+      Vuex. Все материалы, представленные на сайте носят ознакомительный характер и не являются публичной афертой.
+    </p>
   </div>
 </template>
 

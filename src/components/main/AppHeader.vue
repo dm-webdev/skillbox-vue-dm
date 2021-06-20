@@ -7,7 +7,7 @@
         <img src="img/svg/logo-tech.svg" alt="Логотип интернет магазина Технозавррр" width="190" height="33" />
       </a>
 
-      <a class="header__tel" href="tel:8 XXX XXX XX XX">
+      <a class="header__tel" href="https://www.dm-webdev.ru/#feedbackAnchor">
         8 XXX XXX XX XX
       </a>
 
